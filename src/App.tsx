@@ -7,22 +7,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="bg-white w-screen h-screen m-auto flex justify-center items-center space-y-8 flex-col text-black">
-              <HomePage />
-            </div>
-          }
-        />
-        <Route
-          path="/newform"
-          element={
-            <div className="bg-white w-screen h-screen m-auto flex justify-center items-center space-y-8 flex-col text-black">
-              <NewFormPage />
-            </div>
-          }
-        />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/newform" element={<NewFormPage />} />
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
       </Routes>
     </Router>
