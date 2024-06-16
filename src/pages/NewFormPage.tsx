@@ -1,22 +1,30 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const NewFormPage = () => {
-  const getFormInfo = localStorage.getItem("formD");
-  const ConverttoJson = JSON.parse(getFormInfo ?? "");
-  // console.log(ConverttoJson);
+  const navigate = useNavigate();
+  const formInfo = localStorage.getItem("formD");
+  const converttoJsonFormPage = JSON.parse(formInfo ?? "");
 
+  const printData = localStorage.getItem("printData");
+  const convertedToJsonPrintData = printData && JSON.parse(printData);
   const rows = [];
-  if (ConverttoJson === "") return <div>No form</div>;
+  if (converttoJsonFormPage === "") return <div>No form</div>;
 
-  const x = ConverttoJson.maxNum - ConverttoJson.minNum;
+  const x = converttoJsonFormPage.maxNum - converttoJsonFormPage.minNum;
   const [values, setValues] = useState<string[][]>(
-    Array.from({ length: x + 1 }, () => Array(5).fill(""))
+    convertedToJsonPrintData?.table ||
+      Array.from({ length: x + 1 }, () => Array(5).fill(""))
   );
-  const [project, setProject] = useState("");
-  const [project2, setProject2] = useState("");
-  const [pile, setPile] = useState("");
+  const [project, setProject] = useState(
+    convertedToJsonPrintData?.project ?? ""
+  );
+  const [project2, setProject2] = useState(
+    convertedToJsonPrintData?.project2 ?? ""
+  );
+  const [pile, setPile] = useState(convertedToJsonPrintData?.pile ?? "");
 
-  let setx = ConverttoJson.minNum;
+  let setx = converttoJsonFormPage.minNum;
   for (let i = 0; i <= x; i++) {
     const cells = [];
     for (let j = 0; j < 5; j++) {
@@ -47,23 +55,35 @@ const NewFormPage = () => {
     setValues(newValues);
   };
 
-  const getSaveArray = () => {
+  const getSaveArray = async () => {
     // Define your logic for saving data here
-    const mmValues = values.map((row) => row); // Assuming the inputs you want are always in the second column (index 1)
-    console.log("Values:", mmValues);
-    console.log(project);
-    console.log(project2);
-    console.log(pile);
+    const mmValues = values.map((rows) =>
+      rows.map((row) => (row === "" ? 0 : row))
+    );
+
+    const printData = {
+      project,
+      project2,
+      pile,
+      table: mmValues,
+    };
+    await localStorage.setItem("printData", JSON.stringify(printData));
+    navigate("/print");
   };
 
-  const getCopy = () => {
+  const getCopy = async () => {
     // Define your logic for copying data here
-
-    const mmValues = values.map((row) => row); // Assuming the inputs you want are always in the second column (index 1)
-    console.log("Values:", mmValues);
-    console.log(project);
-    console.log(project2);
-    console.log(pile);
+    const mmValues = values.map((rows) =>
+      rows.map((row) => (row === "" ? 0 : row))
+    );
+    const printData = {
+      project,
+      project2,
+      pile,
+      table: mmValues,
+    };
+    await localStorage.setItem("printData", JSON.stringify(printData));
+    navigate("/copy");
   };
 
   return (
@@ -95,6 +115,7 @@ const NewFormPage = () => {
             maxLength={100}
             name="p1"
             className="bg-white border w-[470px]"
+            value={project}
             onChange={(e) => {
               setProject(e.target.value);
             }}
@@ -105,6 +126,7 @@ const NewFormPage = () => {
             type="text"
             maxLength={100}
             className="bg-white border w-[470px]"
+            value={project2}
             onChange={(e) => {
               setProject2(e.target.value);
             }}
@@ -117,6 +139,7 @@ const NewFormPage = () => {
             type="text"
             maxLength={100}
             className="bg-white border w-[470px]"
+            value={pile}
             onChange={(e) => {
               setPile(e.target.value);
             }}
@@ -130,7 +153,7 @@ const NewFormPage = () => {
               <th>PILE LENGTEHS 6 METER</th>
               <th>PILE LENGTEHS 3 METER</th>
               <th>JOINTS NO</th>
-              <th className="uppercase">{ConverttoJson.role}</th>
+              <th className="uppercase">{converttoJsonFormPage.role}</th>
             </tr>
           </thead>
 

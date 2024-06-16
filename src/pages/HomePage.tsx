@@ -46,7 +46,7 @@ const HomePage = () => {
         <div className="font-bold text-4xl">
           FOOK CHOY TRADING & PILING ENGINEERING
         </div>
-        <div className="bg-blue-300 space-y-5 p-8 rounded-[20px]">
+        <div className="bg-blue-300 space-y-5 p-8 rounded">
           <div>输入需要的行数</div>
           <div
             className={cn("flex", "justify-center", "gap-x-5", "items-center")}
@@ -59,6 +59,7 @@ const HomePage = () => {
                   <FormItem className={cn("w-[200px] border-none")}>
                     <FormControl>
                       <Input
+                        className="bg-white border-none rounded"
                         type="number"
                         placeholder="第一个号码"
                         {...field}
@@ -79,6 +80,7 @@ const HomePage = () => {
                   <FormItem className={cn("w-[200px] border-none")}>
                     <FormControl>
                       <Input
+                       className="bg-white border-none rounded"
                         type="number"
                         placeholder="最后的号码"
                         {...field}
