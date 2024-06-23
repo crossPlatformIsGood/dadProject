@@ -27,6 +27,7 @@ const PrintPage = () => {
     for (const array of data) {
       // Sum the corresponding elements
       for (let i = 0; i < array.length; i++) {
+        if (i === 4) result[i] += parseFloat(array[i]);
         result[i] += parseInt(array[i]);
       }
     }
@@ -85,13 +86,13 @@ const PrintPage = () => {
         </div>
       </div>
       <div className="text-base font-bold">PILING RECORD SUMMARY</div>
-      <div className="text-start pl-[68px]">
+      <div className="text-start pl-[35px] mt-3">
         <span className="font-bold">PROJECT: </span>
         <span className="underline">{project}</span>
       </div>
-      <div className="text-start pl-[150px] underline">{project2}</div>
+      <div className="text-start pl-[118px] underline">{project2}</div>
 
-      <div className="text-start pl-[44px]">
+      <div className="text-start pl-[10px]">
         <span className="font-bold">SIZE OF PILE: </span>
         <span className="underline">{pile}</span>
       </div>

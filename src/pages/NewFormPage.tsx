@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const NewFormPage = () => {
   const navigate = useNavigate();
   const formInfo = localStorage.getItem("formD");
-  const converttoJsonFormPage = JSON.parse(formInfo ?? "");
+  const converttoJsonFormPage = formInfo ? JSON.parse(formInfo) : "";
 
   const printData = localStorage.getItem("printData");
   const convertedToJsonPrintData = printData && JSON.parse(printData);
@@ -12,7 +12,7 @@ const NewFormPage = () => {
   if (converttoJsonFormPage === "") return <div>No form</div>;
 
   const x = converttoJsonFormPage.maxNum - converttoJsonFormPage.minNum;
-  const [values, setValues] = useState<string[][]>(
+  const [values, setValues] = useState<number[][]>(
     convertedToJsonPrintData?.table ||
       Array.from({ length: x + 1 }, () => Array(5).fill(""))
   );
@@ -31,16 +31,32 @@ const NewFormPage = () => {
       if (j === 0) {
         cells.push(<td key={j}>{setx}</td>);
         setx++;
+      } else if (j === 4) {
+        cells.push(
+          <td key={j}>
+            <input
+              type="number"
+              name="mm"
+              autoComplete="off"
+              className="bg-white border"
+              pattern="^\d+(?:\.\d{1,2})?$"
+              value={values[i][j]}
+              onChange={(e) =>
+                handleDecimalChange(parseFloat(e.target.value), i, j)
+              }
+            />
+          </td>
+        );
       } else {
         cells.push(
           <td key={j}>
             <input
-              type="text"
+              type="number"
               name="mm"
               autoComplete="off"
               className="bg-white border"
               value={values[i][j]}
-              onChange={(e) => handleChange(e.target.value, i, j)}
+              onChange={(e) => handleChange(parseInt(e.target.value), i, j)}
             />
           </td>
         );
@@ -49,32 +65,49 @@ const NewFormPage = () => {
     rows.push(<tr key={i}>{cells}</tr>);
   }
 
-  const handleChange = (value: string, rowIndex: number, colIndex: number) => {
-    const newValues = [...values];
-    newValues[rowIndex][colIndex] = value;
-    setValues(newValues);
+  const handleChange = (value: any, rowIndex: number, colIndex: number) => {
+    const regex = /^\d*$/; // Only digits (no negative or decimal)
+    if (regex.test(value)) {
+      const newValues = [...values];
+      newValues[rowIndex][colIndex] = value;
+      setValues(newValues);
+    }
   };
 
-  const getSaveArray = async () => {
+  const handleDecimalChange = (
+    value: any,
+    rowIndex: number,
+    colIndex: number
+  ) => {
+    const regex = /^\d*\.?\d{0,2}$/; //2 decimal
+
+    if (regex.test(value)) {
+      const newValues = [...values];
+      newValues[rowIndex][colIndex] = value;
+      setValues(newValues);
+    }
+  };
+
+  const getSaveArray = () => {
     // Define your logic for saving data here
     const mmValues = values.map((rows) =>
-      rows.map((row) => (row === "" ? 0 : row))
+      rows.map((row) => (row.toString() === "" ? 0 : row))
     );
-
     const printData = {
       project,
       project2,
       pile,
       table: mmValues,
     };
-    await localStorage.setItem("printData", JSON.stringify(printData));
+
+    localStorage.setItem("printData", JSON.stringify(printData));
     navigate("/print");
   };
 
-  const getCopy = async () => {
+  const getCopy = () => {
     // Define your logic for copying data here
     const mmValues = values.map((rows) =>
-      rows.map((row) => (row === "" ? 0 : row))
+      rows.map((row) => (row.toString() === "" ? 0 : row))
     );
     const printData = {
       project,
@@ -82,7 +115,7 @@ const NewFormPage = () => {
       pile,
       table: mmValues,
     };
-    await localStorage.setItem("printData", JSON.stringify(printData));
+    localStorage.setItem("printData", JSON.stringify(printData));
     navigate("/copy");
   };
 
@@ -108,7 +141,7 @@ const NewFormPage = () => {
           </div>
         </div>
         <div className="text-base font-bold">PILING RECORD SUMMARY</div>
-        <div className="flex space-x-2.5 justify-center">
+        <div className="flex space-x-2.5 justify-center mt-3">
           <div>PROJECT: </div>
           <input
             type="text"

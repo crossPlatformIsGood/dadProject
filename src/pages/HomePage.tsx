@@ -25,7 +25,7 @@ import { z } from "zod";
 const HomePage = () => {
   const navigate = useNavigate();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     const jsonData = JSON.stringify(data);
     localStorage.setItem("formD", jsonData);
     navigate("/newform");
@@ -39,6 +39,8 @@ const HomePage = () => {
       maxNum: 2,
     },
   });
+  localStorage.removeItem("formD");
+  localStorage.removeItem("printData");
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-5")}>
@@ -80,7 +82,7 @@ const HomePage = () => {
                   <FormItem className={cn("w-[200px] border-none")}>
                     <FormControl>
                       <Input
-                       className="bg-white border-none rounded"
+                        className="bg-white border-none rounded"
                         type="number"
                         placeholder="最后的号码"
                         {...field}
