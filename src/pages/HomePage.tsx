@@ -1,117 +1,134 @@
-import { Button } from "@/components/Button";
-import { Input, InputProps } from "@/components/Input";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger
-} from "@/components/Select";
-import { Field, FieldRenderProps, Form } from "react-final-form";
+  SelectTrigger,
+} from "@/components/ui/Select";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/Form";
+import { Input } from "@/components/ui/Input";
+import { SelectValue } from "@/components/ui/Select";
+import { cn } from "@/lib/utils";
+import formSchema from "@/schemas/FormSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
-interface RenderInputProps
-  extends FieldRenderProps<string, HTMLElement>,
-    InputProps {}
-
-const RenderInput: React.FC<RenderInputProps> = ({ input, meta, ...rest }) => (
-  <div>
-    <Input {...input} {...rest} />
-    {meta.error && meta.touched && (
-      <span style={{ color: "red" }}>{meta.error}</span>
-    )}
-  </div>
-);
-
-const RenderSelect: React.FC<RenderInputProps> = ({ input, children }) => (
-  <Select {...input}>
-    <SelectTrigger>{input.value || "Select an option"}</SelectTrigger>
-    <SelectContent>{children}</SelectContent>
-  </Select>
-);
-
-interface FormValues {
-  minNum?: string;
-  maxNum?: string;
-  role?: string;
-}
-
-const validate = (values: FormValues) => {
-  const errors: FormValues = {};
-  if (!values.minNum) {
-    if (values.minNum && parseInt(values.minNum) <= 0) {
-      errors.minNum = "号码要大于0";
-    }
-    errors.minNum = "请输入一个号码";
-  }
-  if (!values.maxNum) {
-    errors.maxNum = "请输入一个号码";
-  }
-  return errors;
-};
+import { z } from "zod";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  return (
-    <>
-      <div className="font-bold text-4xl">富財貿易打樁工程</div>
-      <div className="font-bold text-4xl">
-        FOOK CHOY TRADING & PILING ENGINEERING
-      </div>
-      <Form
-        // initialValues={{ role: "meter" }} // Set the default value here
-        onSubmit={async (values: FormValues) => {
-          console.log(values.role);
-          if (!values.minNum || !values.maxNum) {
-            return alert("第一个号码和第二个号码不能放空");
-          }
-          if (values.minNum && parseInt(values.minNum) <= 0) {
-            return alert("第一个号码要大过0");
-          }
-          // Simulate async validation
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          navigate("/newform");
-        }}
-        // validate={validate}
-        render={({ handleSubmit, submitting, submitError }) => (
-          <form
-            onSubmit={handleSubmit}
-            className="w-2/3 bg-blue-300 space-y-5 p-8 rounded-[20px]"
-          >
-            <div>输入需要的行数</div>
-            <div className="flex justify-center items-center space-x-4 ">
-              <Field
-                className="bg-white w-[200px] border-none"
-                name="minNum"
-                component={RenderInput}
-                type="text"
-                placeholder="第一号码"
-              />
 
-              <div>-</div>
-              <Field
-                className="bg-white w-[200px] border-none"
-                name="maxNum"
-                component={RenderInput}
-                type="text"
-                placeholder="最长号码"
-              />
-            </div>
-            <Field name="role" component={RenderSelect}>
-              <SelectItem value="meter">Meter</SelectItem>
-              <SelectItem value="foot">Foot</SelectItem>
-            </Field>
-            {submitError && <div>{submitError}</div>}
-            <Button
-              className="bg-amber-300 !px-10 rounded"
-              type="submit"
-              disabled={submitting}
-            >
-              提交
-            </Button>
-          </form>
-        )}
-      ></Form>
-    </>
+  const onSubmit = async (data: any) => {
+    const jsonData = JSON.stringify(data);
+    localStorage.setItem("formD", jsonData);
+    navigate("/newform");
+  };
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      role: "meter",
+      minNum: 1,
+      maxNum: 2,
+    },
+  });
+  localStorage.removeItem("formD");
+  localStorage.removeItem("printData");
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-5")}>
+        <div className="font-bold text-4xl">富財貿易打樁工程</div>
+        <div className="font-bold text-4xl">
+          FOOK CHOY TRADING & PILING ENGINEERING
+        </div>
+        <div className="bg-blue-300 space-y-5 p-8 rounded">
+          <div>输入需要的行数</div>
+          <div
+            className={cn("flex", "justify-center", "gap-x-5", "items-center")}
+          >
+            <FormField
+              control={form.control}
+              name="minNum"
+              render={({ field }) => {
+                return (
+                  <FormItem className={cn("w-[200px] border-none")}>
+                    <FormControl>
+                      <Input
+                        className="bg-white border-none rounded"
+                        type="number"
+                        placeholder="第一个号码"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            <div>-</div>
+            <FormField
+              control={form.control}
+              name="maxNum"
+              render={({ field }) => {
+                return (
+                  <FormItem className={cn("w-[200px] border-none")}>
+                    <FormControl>
+                      <Input
+                        className="bg-white border-none rounded"
+                        type="number"
+                        placeholder="最后的号码"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          </div>
+          <div className="w-[140px] m-auto">
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="meter">Meter</SelectItem>
+                        <SelectItem value="foot">Foot</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <Button type="submit" size="lg">
+            提交
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

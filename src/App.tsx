@@ -2,28 +2,17 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import NewFormPage from "./pages/NewFormPage";
+import PrintPage from "./pages/PrintPage";
+import CopyPage from "./pages/CopyPage";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="bg-white w-screen h-screen m-auto flex justify-center items-center space-y-8 flex-col text-black">
-              <HomePage />
-            </div>
-          }
-        />
-        <Route
-          path="/newform"
-          element={
-            <div className="bg-white w-screen h-screen m-auto flex justify-center items-center space-y-8 flex-col text-black">
-              <NewFormPage />
-            </div>
-          }
-        />
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/newform" element={<NewFormPage />} />
+        <Route path="/print" element={<PrintPage />} />
+        <Route path="/copy" element={<CopyPage />} />
       </Routes>
     </Router>
   );
