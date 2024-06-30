@@ -27,7 +27,9 @@ const PrintPage = () => {
     for (const array of data) {
       // Sum the corresponding elements
       for (let i = 0; i < array.length; i++) {
-        if (i === 4) result[i] += parseFloat(array[i]);
+        if (i === 4) {
+          result[i] = parseFloat(result[i]) + parseFloat(array[i]);
+        }
         result[i] += parseInt(array[i]);
       }
     }

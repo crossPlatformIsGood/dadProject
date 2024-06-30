@@ -15,45 +15,100 @@ const CopyPage = () => {
   const [pFirst, setPFirst] = useState("");
   const [pLast, setPLast] = useState("");
   const [pValue, setPValue] = useState("");
+  const formInfo = localStorage.getItem("formD");
+  const converttoJsonFormInfo = JSON.parse(formInfo ?? "");
+  const printData = localStorage.getItem("printData");
+  if (!printData) return <>没有该数据</>;
+  const convertedToJsonPrintData = JSON.parse(printData);
+  const tableList: number[][] = convertedToJsonPrintData.table;
+  const project = convertedToJsonPrintData.project;
+  const project2 = convertedToJsonPrintData.project2;
+  const pile = convertedToJsonPrintData.pile;
 
   const handleSubmit = () => {
-    console.log(sixMFirst);
-    console.log(sixMLast);
+    const maxNum = converttoJsonFormInfo.maxNum;
+
     if (sixMFirst !== "" || sixMLast !== "") {
-      if (sixMFirst === "" || sixMLast === "" || sixValue === "")
-        return alert("6M号码不能为空");
+      if (sixValue === "") return alert("6M支数不能为空");
+      if (sixMFirst === "" || sixMLast === "") return alert("6M号码不能为空");
       else if (parseInt(sixMFirst) === 0 || parseInt(sixMLast) === 0)
         return alert("6M 号码不能为0， 要大于等于1");
       else if (parseInt(sixMLast) < parseInt(sixMFirst))
         return alert("第二个号码少过" + sixMFirst);
+      else if (parseInt(sixMLast) > maxNum)
+        return alert("第二个号码不能大于" + maxNum);
+
+      const total: number = parseInt(sixMLast);
+      const startedNumber: number = parseInt(sixMFirst) - 1;
+
+      for (let i = startedNumber; i < total; i++) {
+        tableList[i][1] = parseInt(sixValue);
+      }
     }
 
     if (threeMFirst !== "" || threeMLast !== "") {
-      if (threeMFirst === "" || threeMLast === "" || threeValue === "")
+      if (threeValue === "") return alert("3M支数不能为空");
+      if (threeMFirst === "" || threeMLast === "")
         return alert("3M号码不能为空");
       else if (parseInt(threeMFirst) === 0 || parseInt(threeMLast) === 0)
         return alert("3M 号码不能为0， 要大于等于1");
       else if (parseInt(threeMLast) < parseInt(threeMFirst))
         return alert("第二个号码少过" + threeMFirst);
+      else if (parseInt(threeMLast) > maxNum)
+        return alert("第二个号码不能大于" + maxNum);
+
+      const total: number = parseInt(threeMLast);
+      const startedNumber: number = parseInt(threeMFirst) - 1;
+
+      for (let i = startedNumber; i < total; i++) {
+        tableList[i][2] = parseInt(threeValue);
+      }
     }
 
     if (jFirst !== "" || jLast !== "") {
-      if (jFirst === "" || jLast === "" || jValue === "")
-        return alert("JOINT号码不能为空");
+      if (jValue === "") return alert("Joint支数不能为空");
+      if (jFirst === "" || jLast === "") return alert("JOINT号码不能为空");
       else if (parseInt(jFirst) === 0 || parseInt(jLast) === 0)
         return alert("JOINT号码不能为0， 要大于等于1");
       else if (parseInt(jLast) < parseInt(jFirst))
         return alert("第二个号码少过" + jFirst);
+      else if (parseInt(jLast) > maxNum)
+        return alert("第二个号码不能大于" + maxNum);
+
+      const total: number = parseInt(jLast);
+      const startedNumber: number = parseInt(jFirst) - 1;
+
+      for (let i = startedNumber; i < total; i++) {
+        tableList[i][3] = parseInt(jValue);
+      }
     }
 
     if (pFirst !== "" || pLast !== "") {
-      if (pFirst === "" || pLast === "" || pValue === "")
-        return alert("JOINT号码不能为空");
+      if (pValue === "") return alert("PENETRATION支数不能为空");
+      if (pFirst === "" || pLast === "") return alert("JOINT号码不能为空");
       else if (parseInt(pFirst) === 0 || parseInt(pFirst) === 0)
         return alert("PENETRATION 号码不能为0， 要大于等于1");
       else if (parseInt(pLast) < parseInt(pFirst))
         return alert("第二个号码少过" + pFirst);
+      else if (parseInt(pLast) > maxNum)
+        return alert("第二个号码不能大于" + maxNum);
+
+      const total: number = parseInt(pLast);
+      const startedNumber: number = parseInt(pFirst) - 1;
+
+      for (let i = startedNumber; i < total; i++) {
+        tableList[i][4] = parseInt(pValue);
+      }
     }
+    const printData = {
+      project,
+      project2,
+      pile,
+      table: tableList,
+    };
+
+    localStorage.setItem("printData", JSON.stringify(printData));
+    navigate("/newform");
   };
   return (
     <div>
