@@ -111,9 +111,17 @@ const CopyPage = () => {
     localStorage.setItem("printData", JSON.stringify(printData));
     navigate("/newform");
   };
+
+  const handleDecimalChange = (value: any) => {
+    const regex = /^\d*\.?\d{0,2}$/; //2 decimal
+
+    if (regex.test(value)) {
+      setPValue(value);
+    }
+  };
   return (
     <div>
-      <PageTitle summary={false}/>
+      <PageTitle summary={false} />
       <div className="w-[600px] m-auto">
         <div className="flex space-x-5 items-center mt-5">
           <div className="flex items-center space-x-2">
@@ -242,7 +250,7 @@ const CopyPage = () => {
               maxLength={100}
               className="bg-white border w-[100px]"
               value={pValue}
-              onChange={(e) => setPValue(e.target.value)}
+              onChange={(e) => handleDecimalChange(parseFloat(e.target.value))}
             />
           </div>
         </div>
