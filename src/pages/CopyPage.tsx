@@ -1,3 +1,4 @@
+import PageTitle from "@/components/PageTitle";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -112,24 +113,7 @@ const CopyPage = () => {
   };
   return (
     <div>
-      <div className="text-2xl font-bold">富財貿易打樁工程</div>
-      <div className="text-2xl font-bold">
-        FOOK CHOY TRADING & PILING ENGINEERING
-      </div>
-      <div className="text-xs">
-        474,Jalan Nuri Indah 9,Taman Thivy Jaya,70100 Seremban,N.S.D.K
-      </div>
-      <div className="text-xs">(Co.No. 000805830-K)</div>
-      <div className="text-xs flex space-x-5 justify-center items-center">
-        <div>
-          <span className="font-bold"> Tel: </span>
-          <span>012-6367702</span>
-        </div>
-        <div>
-          <span className="font-bold"> Email: </span>
-          <span>fookchoy327@yahoo.com.my</span>
-        </div>
-      </div>
+      <PageTitle summary={false}/>
       <div className="w-[600px] m-auto">
         <div className="flex space-x-5 items-center mt-5">
           <div className="flex items-center space-x-2">
