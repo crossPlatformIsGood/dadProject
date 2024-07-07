@@ -119,6 +119,14 @@ const CopyPage = () => {
       setPValue(value);
     }
   };
+
+  const handleChange = (value: any, setValue: any) => {
+    const regex = /^\d*$/; // Only digits (no negative or decimal)
+    if (regex.test(value)) {
+      setValue(value);
+    }
+  };
+
   return (
     <div>
       <PageTitle summary={false} />
@@ -151,7 +159,9 @@ const CopyPage = () => {
               maxLength={100}
               className="bg-white border w-[100px]"
               value={sixValue}
-              onChange={(e) => setSixValue(e.target.value)}
+              onChange={(e) =>
+                handleChange(parseInt(e.target.value), setSixValue)
+              }
             />
           </div>
         </div>
@@ -184,7 +194,9 @@ const CopyPage = () => {
               maxLength={100}
               className="bg-white border w-[100px]"
               value={threeValue}
-              onChange={(e) => setThreeValue(e.target.value)}
+              onChange={(e) =>
+                handleChange(parseInt(e.target.value), setThreeValue)
+              }
             />
           </div>
         </div>
@@ -217,7 +229,9 @@ const CopyPage = () => {
               maxLength={100}
               className="bg-white border w-[100px]"
               value={jValue}
-              onChange={(e) => setJValue(e.target.value)}
+              onChange={(e) =>
+                handleChange(parseInt(e.target.value), setJValue)
+              }
             />
           </div>
         </div>

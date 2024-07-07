@@ -11,4 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // if want to deploy to docker need to setup this 
+  server: {
+    host: true,
+    port: 5173
+  }
 })
