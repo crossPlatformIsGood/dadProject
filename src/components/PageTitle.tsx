@@ -7,8 +7,8 @@ interface PageTitleProps {
 const PageTitle: React.FC<PageTitleProps> = ({ summary = true }) => {
   return (
     <>
-      <div className="text-2xl font-bold">富財貿易打樁工程</div>
-      <div className="text-2xl font-bold">
+      <div className="text-xl font-bold">富財貿易打樁工程</div>
+      <div className="text-xl font-bold">
         FOOK CHOY TRADING & PILING ENGINEERING
       </div>
       <div className="text-xs mt-1">

@@ -42,11 +42,11 @@ const PrintPage = () => {
     const cells = new Array();
     table.map((row: any, index: number) => {
       if (index === 0) {
-        displayCells.push(<td key={index}>{setx}</td>);
+        displayCells.push(<td key={index} className="text-xs">{setx}</td>);
         cells.push(setx);
         setx++;
       } else {
-        displayCells.push(<td key={index}>{row}</td>);
+        displayCells.push(<td key={index} className="text-xs">{row}</td>);
         cells.push(row);
       }
     });
@@ -61,29 +61,29 @@ const PrintPage = () => {
     if (index === 0) totalCells.push(<td key={index}>Total :</td>);
     else totalCells.push(<td key={index}>{result}</td>);
   });
-  displayRows.push(<tr key="tt">{totalCells}</tr>);
+  displayRows.push(<tr key="tt" className="text-xs">{totalCells}</tr>);
 
   const editPage = () => {
     navigate("/newform");
   };
 
   return (
-    <div className="py-16">
+    <div className="">
       <PageTitle />
       <div className="text-start pl-[35px] mt-3">
-        <span className="font-bold">PROJECT: </span>
+        <span className="font-bold text-sm">PROJECT: </span>
         <span className="underline">{project}</span>
       </div>
       <div className="text-start pl-[118px] underline">{project2}</div>
 
       <div className="text-start pl-[10px]">
-        <span className="font-bold">SIZE OF PILE: </span>
+        <span className="font-bold text-sm">SIZE OF PILE: </span>
         <span className="underline">{pile}</span>
       </div>
 
       <table className="my-2.5 mx-auto">
         <thead>
-          <tr>
+          <tr className="text-xs">
             <th>PILE NO</th>
             <th>PILE LENGTEHS 6 METER</th>
             <th>PILE LENGTEHS 3 METER</th>
