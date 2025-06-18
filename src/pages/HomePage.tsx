@@ -47,10 +47,7 @@ const HomePage = () => {
   });
   // localStorage.removeItem("formD");
   // localStorage.removeItem("printData");
-
-  const values = form.getValues();
-
-  console.log(values);
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-5")}>
