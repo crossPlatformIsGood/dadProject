@@ -18,17 +18,6 @@ const PrintPage = () => {
   const displayRows = new Array();
   const rows = new Array();
 
-  function getMaxDecimalPlaces(numbers: any) {
-    return numbers.reduce((max: any, num: any) => {
-      const str = num.toString();
-      if (str.includes(".")) {
-        const decimals = str.split(".")[1].length;
-        return Math.max(max, decimals);
-      }
-      return max;
-    }, 0);
-  }
-
   function sumArrays(data: any): number[] {
     // Check if the table has any rows
     if (data.length === 0) return [];
