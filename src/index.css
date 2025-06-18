@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -74,5 +72,5 @@ button:focus-visible {
 td,
 th {
   border: 1px solid #dddddd;
-  padding: 4px;
+  padding: 4px 20px;
 }

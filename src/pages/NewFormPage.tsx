@@ -162,7 +162,7 @@ const NewFormPage = () => {
           />
         </div>
 
-        <table border={10} align="center" className="border-collapse mt-5">
+        <table border={10} align="center" className="border-collapse m-auto mt-5">
           <thead>
             <tr>
               <th>PILE NO</th>
