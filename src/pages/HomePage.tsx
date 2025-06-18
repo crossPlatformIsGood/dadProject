@@ -25,9 +25,15 @@ import { z } from "zod";
 const HomePage = () => {
   const navigate = useNavigate();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = (data: any) => {
     const jsonData = JSON.stringify(data);
-    localStorage.setItem("formD", jsonData);
+
+    try {
+      localStorage.setItem("formD", jsonData);
+    } catch (e) {
+      console.error("Storage error", e);
+    }
+
     navigate("/newform");
   };
 
@@ -39,8 +45,12 @@ const HomePage = () => {
       maxNum: 2,
     },
   });
-  localStorage.removeItem("formD");
-  localStorage.removeItem("printData");
+  // localStorage.removeItem("formD");
+  // localStorage.removeItem("printData");
+
+  const values = form.getValues();
+
+  console.log(values);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-5")}>
@@ -65,7 +75,10 @@ const HomePage = () => {
                         type="number"
                         placeholder="第一个号码"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          field.onChange(val === "" ? undefined : Number(val));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -86,7 +99,10 @@ const HomePage = () => {
                         type="number"
                         placeholder="最后的号码"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          field.onChange(val === "" ? undefined : Number(val));
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

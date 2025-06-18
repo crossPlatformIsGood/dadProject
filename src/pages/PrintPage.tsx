@@ -18,18 +18,44 @@ const PrintPage = () => {
   const displayRows = new Array();
   const rows = new Array();
 
+  function getMaxDecimalPlaces(numbers: any) {
+    return numbers.reduce((max: any, num: any) => {
+      const str = num.toString();
+      if (str.includes(".")) {
+        const decimals = str.split(".")[1].length;
+        return Math.max(max, decimals);
+      }
+      return max;
+    }, 0);
+  }
+
   function sumArrays(data: any): number[] {
     // Check if the table has any rows
     if (data.length === 0) return [];
-
+    let checkDecimal = 1;
     // Initialize the result array with zeros of the same length as the first inner array
     const result = new Array(data[0].length).fill(0);
+    for (const array of data) {
+      const value = array[4];
+      if (typeof value === "number" || typeof value === "string") {
+        const str = value.toString();
+        if (str.includes(".")) {
+          const decimals = str.split(".")[1].length;
+          if (decimals > 1) {
+            checkDecimal = 2;
+            break; // we can stop early since we only care if ANY has > 1
+          }
+        }
+      }
+    }
+
     // Iterate over each array in the table
     for (const array of data) {
       // Sum the corresponding elements
       for (let i = 0; i < array.length; i++) {
         if (i === 4) {
-          result[i] = parseFloat(result[i]) + parseFloat(array[i]);
+          const totalValue = parseFloat(result[i]) + parseFloat(array[i]);
+          result[i] = totalValue.toFixed(checkDecimal);
         } else result[i] += parseInt(array[i]);
       }
     }
@@ -42,11 +68,19 @@ const PrintPage = () => {
     const cells = new Array();
     table.map((row: any, index: number) => {
       if (index === 0) {
-        displayCells.push(<td key={index} className="text-xs">{setx}</td>);
+        displayCells.push(
+          <td key={index} className="text-xs">
+            {setx}
+          </td>
+        );
         cells.push(setx);
         setx++;
       } else {
-        displayCells.push(<td key={index} className="text-xs">{row}</td>);
+        displayCells.push(
+          <td key={index} className="text-xs">
+            {row}
+          </td>
+        );
         cells.push(row);
       }
     });
@@ -61,7 +95,11 @@ const PrintPage = () => {
     if (index === 0) totalCells.push(<td key={index}>Total :</td>);
     else totalCells.push(<td key={index}>{result}</td>);
   });
-  displayRows.push(<tr key="tt" className="text-xs">{totalCells}</tr>);
+  displayRows.push(
+    <tr key="tt" className="text-xs">
+      {totalCells}
+    </tr>
+  );
 
   const editPage = () => {
     navigate("/newform");
