@@ -45,8 +45,6 @@ const HomePage = () => {
       maxNum: 2,
     },
   });
-  // localStorage.removeItem("formD");
-  // localStorage.removeItem("printData");
   
   return (
     <Form {...form}>
