@@ -1,9 +1,9 @@
 @media print {
-    #p {
-      display: none;
-    }
+	#p {
+		display: none;
+	}
 
-    #e {
-      display: none;
-    }
-  }
+	#e {
+		display: none;
+	}
+}
