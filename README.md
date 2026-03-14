@@ -1,35 +1,56 @@
-# React + TypeScript + Vite
+# 富財貿易打樁工程 — Piling Record Summary
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A piling engineering record management system for **Fook Choy Trading & Piling Engineering**. Built to track pile numbers, measurements, and generate printable summary reports.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Layer | Technology |
+|-------|-----------|
+| Framework | React 19 + TypeScript 5.9 |
+| Build | Vite 7 + SWC |
+| Styling | Tailwind CSS v4 (Vite plugin) |
+| UI Components | Shadcn/ui (Radix UI) |
+| Forms | React Hook Form + Zod |
+| Routing | React Router v7 |
+| Linting & Formatting | Biome |
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+# Install dependencies
+yarn install
 
-- Configure the top-level `parserOptions` property like this:
+# Start dev server (SWC + HMR)
+yarn dev
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+# Production build
+yarn build
+
+# Preview production build
+yarn preview
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Scripts
 
-# How to deploy to Docker command
-docker build -t name .
+| Command | Description |
+|---------|-------------|
+| `yarn dev` | Start dev server on port 5173 |
+| `yarn build` | Type-check with tsc, then build with Vite |
+| `yarn preview` | Preview production build locally |
+| `yarn format` | Format code with Biome |
+| `yarn format-and-lint` | Check formatting and lint rules |
+| `yarn format-and-lint:fix` | Auto-fix formatting and lint issues |
+| `yarn check-format` | Check formatting without auto-fix |
 
-docker run -p port:port -d name
+## Deployment
+
+### GitHub Pages
+
+The app is configured to deploy to GitHub Pages with base path `/dadProject/`. SPA routing is handled via `public/404.html` redirect.
+
+### Docker
+
+```bash
+docker build -t dadproject .
+docker run -p 5173:5173 -d dadproject
+```

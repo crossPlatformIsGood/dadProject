@@ -1,144 +1,172 @@
+import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import "./printpage.css";
 import PageTitle from "@/components/PageTitle";
 
+type CellValue = string | number;
+
 const PrintPage = () => {
-  const navigate = useNavigate();
-  const printData = localStorage.getItem("printData");
-  const formInfo = localStorage.getItem("formD");
-  const converttoJsonFormInfo = JSON.parse(formInfo ?? "");
-  let setx = converttoJsonFormInfo.minNum;
+	const navigate = useNavigate();
+	const printData = localStorage.getItem("printData");
+	const formInfo = localStorage.getItem("formD");
+	if (!formInfo) return <>没有该数据</>;
+	const converttoJsonFormInfo = JSON.parse(formInfo);
+	let setx = converttoJsonFormInfo.minNum;
 
-  if (!printData) return <>没有该数据</>;
-  const convertedToJsonPrintData = JSON.parse(printData);
-  const project = convertedToJsonPrintData.project;
-  const project2 = convertedToJsonPrintData.project2;
-  const pile = convertedToJsonPrintData.pile;
-  const tables = convertedToJsonPrintData.table;
-  const displayRows = new Array();
-  const rows = new Array();
+	if (!printData) return <>没有该数据</>;
+	const convertedToJsonPrintData = JSON.parse(printData);
+	const project = convertedToJsonPrintData.project;
+	const project2 = convertedToJsonPrintData.project2;
+	const pile = convertedToJsonPrintData.pile;
+	const tables: CellValue[][] = convertedToJsonPrintData.table;
+	const displayRows: ReactNode[] = [];
+	const rows: CellValue[][] = [];
 
-  function sumArrays(data: any): number[] {
-    // Check if the table has any rows
-    if (data.length === 0) return [];
-    let checkDecimal = 1;
-    // Initialize the result array with zeros of the same length as the first inner array
-    const result = new Array(data[0].length).fill(0);
-    for (const array of data) {
-      const value = array[4];
-      if (typeof value === "number" || typeof value === "string") {
-        const str = value.toString();
-        if (str.includes(".")) {
-          const decimals = str.split(".")[1].length;
-          if (decimals > 1) {
-            checkDecimal = 2;
-            break; // we can stop early since we only care if ANY has > 1
-          }
-        }
-      }
-    }
+	function sumArrays(data: CellValue[][]): (string | number)[] {
+		if (data.length === 0) return [];
+		let checkDecimal = 1;
+		const result: (string | number)[] = new Array(data[0].length).fill(0);
+		for (const array of data) {
+			const value = array[4];
+			if (typeof value === "number" || typeof value === "string") {
+				const str = value.toString();
+				if (str.includes(".")) {
+					const decimals = str.split(".")[1].length;
+					if (decimals > 1) {
+						checkDecimal = 2;
+						break;
+					}
+				}
+			}
+		}
 
-    // Iterate over each array in the table
-    for (const array of data) {
-      // Sum the corresponding elements
-      for (let i = 0; i < array.length; i++) {
-        if (i === 4) {
-          const totalValue = parseFloat(result[i]) + parseFloat(array[i]);
-          result[i] = totalValue.toFixed(checkDecimal);
-        } else result[i] += parseInt(array[i]);
-      }
-    }
+		for (const array of data) {
+			for (let i = 0; i < array.length; i++) {
+				if (i === 4) {
+					const totalValue =
+						Number.parseFloat(String(result[i])) +
+						Number.parseFloat(String(array[i]));
+					result[i] = totalValue.toFixed(checkDecimal);
+				} else
+					result[i] = Number(result[i]) + Number.parseInt(String(array[i]), 10);
+			}
+		}
 
-    return result;
-  }
+		return result;
+	}
 
-  tables.map((table: any, tableIndex: number) => {
-    const displayCells = new Array();
-    const cells = new Array();
-    table.map((row: any, index: number) => {
-      if (index === 0) {
-        displayCells.push(
-          <td key={index} className="text-xs">
-            {setx}
-          </td>
-        );
-        cells.push(setx);
-        setx++;
-      } else {
-        displayCells.push(
-          <td key={index} className="text-xs">
-            {row}
-          </td>
-        );
-        cells.push(row);
-      }
-    });
+	tables.forEach((table: CellValue[], tableIndex: number) => {
+		const displayCells: ReactNode[] = [];
+		const cells: CellValue[] = [];
+		table.forEach((row: CellValue, colIndex: number) => {
+			if (colIndex === 0) {
+				displayCells.push(
+					<td
+						key={`cell-${tableIndex}-${colIndex}`}
+						className="text-xs text-center font-medium text-gray-700"
+					>
+						{setx}
+					</td>,
+				);
+				cells.push(setx);
+				setx++;
+			} else {
+				displayCells.push(
+					<td
+						key={`cell-${tableIndex}-${colIndex}`}
+						className="text-xs text-center"
+					>
+						{row}
+					</td>,
+				);
+				cells.push(row);
+			}
+		});
 
-    displayRows.push(<tr key={tableIndex}>{displayCells}</tr>);
-    rows.push(cells);
-  });
+		displayRows.push(
+			<tr key={`row-${tableIndex}`} className="even:bg-gray-50">
+				{displayCells}
+			</tr>,
+		);
+		rows.push(cells);
+	});
 
-  const results = sumArrays(rows);
-  const totalCells = new Array();
-  results.map((result: any, index: number) => {
-    if (index === 0) totalCells.push(<td key={index}>Total :</td>);
-    else totalCells.push(<td key={index}>{result}</td>);
-  });
-  displayRows.push(
-    <tr key="tt" className="text-xs">
-      {totalCells}
-    </tr>
-  );
+	const results = sumArrays(rows);
+	const totalCells: ReactNode[] = [];
+	results.forEach((result: string | number, index: number) => {
+		if (index === 0)
+			totalCells.push(
+				<td key="total-label" className="font-bold text-sm">
+					Total :
+				</td>,
+			);
+		else
+			totalCells.push(
+				<td key={`total-${index}`} className="font-bold text-sm text-center">
+					{result}
+				</td>,
+			);
+	});
+	displayRows.push(
+		<tr key="tt" className="bg-amber-50 border-t-2 border-gray-400">
+			{totalCells}
+		</tr>,
+	);
 
-  const editPage = () => {
-    navigate("/newform");
-  };
+	const editPage = () => {
+		navigate("/newform");
+	};
 
-  return (
-    <div className="">
-      <PageTitle />
-      <div className="text-start pl-[35px] mt-3">
-        <span className="font-bold text-sm">PROJECT: </span>
-        <span className="underline">{project}</span>
-      </div>
-      <div className="text-start pl-[118px] underline">{project2}</div>
+	return (
+		<div>
+			<PageTitle />
+			<div className="max-w-2xl mx-auto space-y-1 mb-4">
+				<div className="text-start">
+					<span className="font-bold text-sm">PROJECT: </span>
+					<span className="underline">{project}</span>
+				</div>
+				{project2 && (
+					<div className="text-start pl-[85px] underline">{project2}</div>
+				)}
+				<div className="text-start">
+					<span className="font-bold text-sm">SIZE OF PILE: </span>
+					<span className="underline">{pile}</span>
+				</div>
+			</div>
 
-      <div className="text-start pl-[10px]">
-        <span className="font-bold text-sm">SIZE OF PILE: </span>
-        <span className="underline">{pile}</span>
-      </div>
+			<table className="my-2.5 mx-auto">
+				<thead>
+					<tr className="bg-gray-100 text-xs">
+						<th>PILE NO</th>
+						<th>PILE LENGTHS 6 METER</th>
+						<th>PILE LENGTHS 3 METER</th>
+						<th>JOINTS NO</th>
+						<th className="uppercase">{converttoJsonFormInfo.role}</th>
+					</tr>
+				</thead>
+				<tbody>{displayRows}</tbody>
+			</table>
 
-      <table className="my-2.5 mx-auto">
-        <thead>
-          <tr className="text-xs">
-            <th>PILE NO</th>
-            <th>PILE LENGTEHS 6 METER</th>
-            <th>PILE LENGTEHS 3 METER</th>
-            <th>JOINTS NO</th>
-            <th className="uppercase">{converttoJsonFormInfo.role}</th>
-          </tr>
-        </thead>
-        <tbody>{displayRows}</tbody>
-      </table>
-
-      <div className="flex justify-center space-x-5 mb-10">
-        <div
-          id="p"
-          onClick={() => window.print()}
-          className="bg-amber-300 px-8 py-2 cursor-pointer w-[120px]"
-        >
-          print
-        </div>
-        <div
-          id="e"
-          onClick={editPage}
-          className="bg-amber-300 px-8 py-2 cursor-pointer w-[120px]"
-        >
-          修改
-        </div>
-      </div>
-    </div>
-  );
+			<div className="flex justify-center gap-3 mb-10">
+				<button
+					type="button"
+					id="p"
+					onClick={() => window.print()}
+					className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
+				>
+					Print
+				</button>
+				<button
+					type="button"
+					id="e"
+					onClick={editPage}
+					className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
+				>
+					修改
+				</button>
+			</div>
+		</div>
+	);
 };
 
 export default PrintPage;
