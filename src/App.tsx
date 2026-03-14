@@ -1,25 +1,25 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import CopyPage from "./pages/CopyPage";
 import HomePage from "./pages/HomePage";
 import NewFormPage from "./pages/NewFormPage";
 import PrintPage from "./pages/PrintPage";
-import CopyPage from "./pages/CopyPage";
-import { useEffect } from "react";
 
 function App() {
-   useEffect(() => {
-    localStorage.clear();
-  }, []);
-  return (
-    <Router basename={import.meta.env.BASE_URL}>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/newform" element={<NewFormPage />} />
-        <Route path="/print" element={<PrintPage />} />
-        <Route path="/copy" element={<CopyPage />} />
-      </Routes>
-    </Router>
-  );
+	useEffect(() => {
+		localStorage.clear();
+	}, []);
+	return (
+		<Router basename={import.meta.env.BASE_URL}>
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route path="/newform" element={<NewFormPage />} />
+				<Route path="/print" element={<PrintPage />} />
+				<Route path="/copy" element={<CopyPage />} />
+			</Routes>
+		</Router>
+	);
 }
 
 export default App;

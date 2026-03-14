@@ -1,19 +1,19 @@
-import path from "path";
-import { defineConfig } from "vite";
+import path from "node:path";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  base: "/dadProject/", // Replace with your repository name
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  // if want to deploy to docker need to setup this
-  server: {
-    host: true,
-    port: 5173,
-  },
+	plugins: [react(), tailwindcss()],
+	base: "/dadProject/",
+	resolve: {
+		alias: {
+			"@": path.resolve(import.meta.dirname, "./src"),
+		},
+	},
+	server: {
+		host: true,
+		port: 5173,
+	},
 });
