@@ -16,21 +16,19 @@
       // When the single page app is loaded further down in this file,
       // the correct url will be waiting in the browser's history for
       // the single page app to route accordingly.
-      (function(l) {
+      (((l) => {
         if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
+          const decoded = l.search.slice(1).split('&').map((s) => s.replace(/~and~/g, '&')).join('?');
           window.history.replaceState(null, null,
               l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
-      }(window.location))
+      })(window.location))
     </script>
     <!-- End Single Page Apps for GitHub Pages -->
     <title>富財貿易打樁工程</title>
-    <script type="module" crossorigin src="/dadProject/assets/index-WAGaNmvX.js"></script>
-    <link rel="stylesheet" crossorigin href="/dadProject/assets/index-DeGyE8Lg.css">
+    <script type="module" crossorigin src="/dadProject/assets/index-CG7sPSBu.js"></script>
+    <link rel="stylesheet" crossorigin href="/dadProject/assets/index-CLjmXGDF.css">
   </head>
   <body>
     <div id="root"></div>
