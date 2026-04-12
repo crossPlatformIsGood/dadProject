@@ -18,6 +18,7 @@ const PrintPage = () => {
 	const project = convertedToJsonPrintData.project;
 	const project2 = convertedToJsonPrintData.project2;
 	const pile = convertedToJsonPrintData.pile;
+	const date = convertedToJsonPrintData.date;
 	const tables: CellValue[][] = convertedToJsonPrintData.table;
 	const displayRows: ReactNode[] = [];
 	const rows: CellValue[][] = [];
@@ -120,6 +121,12 @@ const PrintPage = () => {
 	return (
 		<div>
 			<PageTitle />
+			{date && (
+				<div className="max-w-2xl mx-auto text-end mb-1">
+					<span className="font-bold text-sm">DATE: </span>
+					<span className="underline">{date}</span>
+				</div>
+			)}
 			<div className="max-w-2xl mx-auto space-y-1 mb-4">
 				<div className="text-start">
 					<span className="font-bold text-sm">PROJECT: </span>
