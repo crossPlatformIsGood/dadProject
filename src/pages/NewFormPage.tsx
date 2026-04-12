@@ -79,6 +79,7 @@ const NewFormPage = () => {
 	const handleChange = (value: string, rowIndex: number, colIndex: number) => {
 		const regex = /^\d*$/;
 		if (regex.test(value)) {
+			// replace 0 to number
 			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
 			const newValues = values.map((row, i) =>
 				i === rowIndex
