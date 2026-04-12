@@ -16,7 +16,11 @@ const NewFormPage = () => {
 
 	const [values, setValues] = useState<(string | number)[][]>(
 		convertedToJsonPrintData?.table ||
-			Array.from({ length: x + 1 }, () => Array(5).fill("")),
+			Array.from({ length: x + 1 }, (_, i) => {
+			const row = Array(5).fill("");
+			row[0] = converttoJsonFormPage ? converttoJsonFormPage.minNum + i : "";
+			return row;
+		}),
 	);
 	const [project, setProject] = useState(
 		convertedToJsonPrintData?.project ?? "",
@@ -25,21 +29,27 @@ const NewFormPage = () => {
 		convertedToJsonPrintData?.project2 ?? "",
 	);
 	const [pile, setPile] = useState(convertedToJsonPrintData?.pile ?? "");
+	const [date, setDate] = useState(convertedToJsonPrintData?.date ?? "");
 
 	if (!converttoJsonFormPage) return <div>No form</div>;
 
 	const rows = [];
-	let setx = converttoJsonFormPage.minNum;
 	for (let i = 0; i <= x; i++) {
 		const cells = [];
 		for (let j = 0; j < 5; j++) {
 			if (j === 0) {
 				cells.push(
-					<td key={j} className="text-center font-medium text-gray-700">
-						{setx}
+					<td key={j}>
+						<input
+							type="number"
+							name="mm"
+							autoComplete="off"
+							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+							value={values[i][j]}
+							onChange={(e) => handleChange(e.target.value, i, j)}
+						/>
 					</td>,
 				);
-				setx++;
 			} else if (j === 4) {
 				cells.push(
 					<td key={j}>
@@ -110,12 +120,13 @@ const NewFormPage = () => {
 
 	const getSaveArray = () => {
 		const mmValues = values.map((rows) =>
-			rows.map((row) => (row.toString() === "" ? 0 : row)),
+			rows.map((row) => (row === "" ? 0 : Number(row))),
 		);
 		const printData = {
 			project,
 			project2,
 			pile,
+			date,
 			table: mmValues,
 		};
 
@@ -125,12 +136,13 @@ const NewFormPage = () => {
 
 	const getCopy = () => {
 		const mmValues = values.map((rows) =>
-			rows.map((row) => (row.toString() === "" ? 0 : row)),
+			rows.map((row) => (row === "" ? 0 : Number(row))),
 		);
 		const printData = {
 			project,
 			project2,
 			pile,
+			date,
 			table: mmValues,
 		};
 		localStorage.setItem("printData", JSON.stringify(printData));
@@ -141,41 +153,56 @@ const NewFormPage = () => {
 		<div>
 			<form>
 				<PageTitle />
-				<div className="space-y-3 max-w-2xl mx-auto">
-					<div className="flex items-center gap-3">
-						<span className="font-bold text-sm text-gray-700 w-[120px] text-right shrink-0">
-							PROJECT:
+				<div className="max-w-2xl mx-auto">
+					<div className="flex items-center justify-end gap-3 mb-3">
+						<span className="font-bold text-sm text-gray-700 shrink-0">
+							DATE:
 						</span>
 						<input
 							type="text"
-							maxLength={100}
-							name="p1"
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={project}
-							onChange={(e) => setProject(e.target.value)}
+							maxLength={10}
+							placeholder="DD/MM/YYYY"
+							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 w-[150px] focus:outline-none focus:ring-2 focus:ring-blue-300"
+							value={date}
+							onChange={(e) => setDate(e.target.value)}
 						/>
 					</div>
-					<div className="flex items-center gap-3">
-						<div className="w-[120px] shrink-0" />
-						<input
-							type="text"
-							maxLength={100}
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={project2}
-							onChange={(e) => setProject2(e.target.value)}
-						/>
-					</div>
-					<div className="flex items-center gap-3">
-						<span className="font-bold text-sm text-gray-700 w-[120px] text-right shrink-0">
-							SIZE OF PILE:
-						</span>
-						<input
-							type="text"
-							maxLength={100}
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={pile}
-							onChange={(e) => setPile(e.target.value)}
-						/>
+					<div className="space-y-3">
+						<div className="flex items-center gap-3">
+							<span className="font-bold text-sm text-gray-700 w-[120px] text-right shrink-0">
+								PROJECT:
+							</span>
+							<input
+								type="text"
+								maxLength={100}
+								name="p1"
+								className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+								value={project}
+								onChange={(e) => setProject(e.target.value)}
+							/>
+						</div>
+						<div className="flex items-center gap-3">
+							<div className="w-[120px] shrink-0" />
+							<input
+								type="text"
+								maxLength={100}
+								className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+								value={project2}
+								onChange={(e) => setProject2(e.target.value)}
+							/>
+						</div>
+						<div className="flex items-center gap-3">
+							<span className="font-bold text-sm text-gray-700 w-[120px] text-right shrink-0">
+								SIZE OF PILE:
+							</span>
+							<input
+								type="text"
+								maxLength={100}
+								className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+								value={pile}
+								onChange={(e) => setPile(e.target.value)}
+							/>
+						</div>
 					</div>
 				</div>
 

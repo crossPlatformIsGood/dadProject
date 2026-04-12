@@ -26,6 +26,7 @@ const CopyPage = () => {
 	const project = convertedToJsonPrintData.project;
 	const project2 = convertedToJsonPrintData.project2;
 	const pile = convertedToJsonPrintData.pile;
+	const date = convertedToJsonPrintData.date;
 
 	const handleSubmit = () => {
 		const maxNum = converttoJsonFormInfo.maxNum;
@@ -103,13 +104,14 @@ const CopyPage = () => {
 			const startedNumber: number = parseInt(pFirst, 10) - 1;
 
 			for (let i = startedNumber; i < total; i++) {
-				tableList[i][4] = parseInt(pValue, 10);
+				tableList[i][4] = parseFloat(pValue);
 			}
 		}
 		const printData = {
 			project,
 			project2,
 			pile,
+			date,
 			table: tableList,
 		};
 
@@ -151,14 +153,14 @@ const CopyPage = () => {
 						type="number"
 						className={inputClass}
 						value={sixMFirst}
-						onChange={(e) => setSixMFirst(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setSixMFirst)}
 					/>
 					<span className="text-gray-400">—</span>
 					<input
 						type="number"
 						className={inputClass}
 						value={sixMLast}
-						onChange={(e) => setSixMLast(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setSixMLast)}
 					/>
 					<span className="text-sm text-gray-600">支数=</span>
 					<input
@@ -177,14 +179,14 @@ const CopyPage = () => {
 						type="number"
 						className={inputClass}
 						value={threeMFirst}
-						onChange={(e) => setThreeMFirst(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setThreeMFirst)}
 					/>
 					<span className="text-gray-400">—</span>
 					<input
 						type="number"
 						className={inputClass}
 						value={threeMLast}
-						onChange={(e) => setThreeMLast(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setThreeMLast)}
 					/>
 					<span className="text-sm text-gray-600">支数=</span>
 					<input
@@ -203,14 +205,14 @@ const CopyPage = () => {
 						type="number"
 						className={inputClass}
 						value={jFirst}
-						onChange={(e) => setJFirst(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setJFirst)}
 					/>
 					<span className="text-gray-400">—</span>
 					<input
 						type="number"
 						className={inputClass}
 						value={jLast}
-						onChange={(e) => setJLast(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setJLast)}
 					/>
 					<span className="text-sm text-gray-600">支数=</span>
 					<input
@@ -229,14 +231,14 @@ const CopyPage = () => {
 						type="number"
 						className={inputClass}
 						value={pFirst}
-						onChange={(e) => setPFirst(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setPFirst)}
 					/>
 					<span className="text-gray-400">—</span>
 					<input
 						type="number"
 						className={inputClass}
 						value={pLast}
-						onChange={(e) => setPLast(e.target.value)}
+						onChange={(e) => handleChange(e.target.value, setPLast)}
 					/>
 					<span className="text-sm text-gray-600">支数=</span>
 					<input
