@@ -121,14 +121,16 @@ const CopyPage = () => {
 		const regex = /^\d*\.?\d{0,2}$/; //2 decimal
 
 		if (regex.test(value)) {
-			setPValue(value);
+			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
+			setPValue(sanitizedValue);
 		}
 	};
 
 	const handleChange = (value: string, setValue: (v: string) => void) => {
 		const regex = /^\d*$/; // Only digits (no negative or decimal)
 		if (regex.test(value)) {
-			setValue(value);
+			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
+			setValue(sanitizedValue);
 		}
 	};
 

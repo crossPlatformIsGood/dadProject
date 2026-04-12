@@ -79,9 +79,10 @@ const NewFormPage = () => {
 	const handleChange = (value: string, rowIndex: number, colIndex: number) => {
 		const regex = /^\d*$/;
 		if (regex.test(value)) {
+			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
 			const newValues = values.map((row, i) =>
 				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? value : cell))
+					? row.map((cell, j) => (j === colIndex ? sanitizedValue : cell))
 					: row,
 			);
 			setValues(newValues);
@@ -96,9 +97,10 @@ const NewFormPage = () => {
 		const regex = /^\d*\.?\d{0,2}$/;
 
 		if (regex.test(value)) {
+			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
 			const newValues = values.map((row, i) =>
 				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? value : cell))
+					? row.map((cell, j) => (j === colIndex ? sanitizedValue : cell))
 					: row,
 			);
 			setValues(newValues);
