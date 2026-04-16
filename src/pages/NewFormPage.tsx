@@ -6,6 +6,7 @@ const NewFormPage = () => {
 	const navigate = useNavigate();
 	const formInfo = localStorage.getItem("formD");
 	const converttoJsonFormPage = formInfo ? JSON.parse(formInfo) : null;
+	const showPileNo = !!converttoJsonFormPage?.showPileNo;
 
 	const printData = localStorage.getItem("printData");
 	const convertedToJsonPrintData = printData ? JSON.parse(printData) : null;
@@ -16,11 +17,7 @@ const NewFormPage = () => {
 
 	const [values, setValues] = useState<(string | number)[][]>(
 		convertedToJsonPrintData?.table ||
-			Array.from({ length: x + 1 }, (_, i) => {
-			const row = Array(5).fill("");
-			row[0] = converttoJsonFormPage ? converttoJsonFormPage.minNum + i : "";
-			return row;
-		}),
+			Array.from({ length: x + 1 }, () => Array(5).fill("")),
 	);
 	const [project, setProject] = useState(
 		convertedToJsonPrintData?.project ?? "",
@@ -36,20 +33,30 @@ const NewFormPage = () => {
 	const rows = [];
 	for (let i = 0; i <= x; i++) {
 		const cells = [];
+		cells.push(
+			<td
+				key="no"
+				className="text-sm text-center font-medium text-gray-700 px-2"
+			>
+				{converttoJsonFormPage.minNum + i}
+			</td>,
+		);
 		for (let j = 0; j < 5; j++) {
 			if (j === 0) {
-				cells.push(
-					<td key={j}>
-						<input
-							type="number"
-							name="mm"
-							autoComplete="off"
-							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={values[i][j]}
-							onChange={(e) => handleChange(e.target.value, i, j)}
-						/>
-					</td>,
-				);
+				if (showPileNo) {
+					cells.push(
+						<td key={j}>
+							<input
+								type="number"
+								name="mm"
+								autoComplete="off"
+								className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+								value={values[i][j]}
+								onChange={(e) => handleChange(e.target.value, i, j)}
+							/>
+						</td>,
+					);
+				}
 			} else if (j === 4) {
 				cells.push(
 					<td key={j}>
@@ -120,7 +127,9 @@ const NewFormPage = () => {
 
 	const getSaveArray = () => {
 		const mmValues = values.map((rows) =>
-			rows.map((row) => (row === "" ? 0 : Number(row))),
+			rows.map((row, j) =>
+				j === 0 ? row : row === "" ? 0 : Number(row),
+			),
 		);
 		const printData = {
 			project,
@@ -136,7 +145,9 @@ const NewFormPage = () => {
 
 	const getCopy = () => {
 		const mmValues = values.map((rows) =>
-			rows.map((row) => (row === "" ? 0 : Number(row))),
+			rows.map((row, j) =>
+				j === 0 ? row : row === "" ? 0 : Number(row),
+			),
 		);
 		const printData = {
 			project,
@@ -209,7 +220,12 @@ const NewFormPage = () => {
 				<table className="border-collapse mx-auto mt-5">
 					<thead>
 						<tr className="bg-gray-100">
-							<th className="text-sm font-semibold text-gray-700">PILE NO</th>
+							<th className="text-sm font-semibold text-gray-700">{showPileNo ? 'NO.': 'PILE NO'}</th>
+							{showPileNo && (
+								<th className="text-sm font-semibold text-gray-700">
+									PILE NO
+								</th>
+							)}
 							<th className="text-sm font-semibold text-gray-700">
 								PILE LENGTHS 6 METER
 							</th>

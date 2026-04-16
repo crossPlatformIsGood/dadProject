@@ -11,6 +11,7 @@ const PrintPage = () => {
 	const formInfo = localStorage.getItem("formD");
 	if (!formInfo) return <>没有该数据</>;
 	const converttoJsonFormInfo = JSON.parse(formInfo);
+	const showPileNo = !!converttoJsonFormInfo.showPileNo;
 	let setx = converttoJsonFormInfo.minNum;
 
 	if (!printData) return <>没有该数据</>;
@@ -28,7 +29,7 @@ const PrintPage = () => {
 		let checkDecimal = 1;
 		const result: (string | number)[] = new Array(data[0].length).fill(0);
 		for (const array of data) {
-			const value = array[4];
+			const value = array[5];
 			if (typeof value === "number" || typeof value === "string") {
 				const str = value.toString();
 				if (str.includes(".")) {
@@ -43,7 +44,9 @@ const PrintPage = () => {
 
 		for (const array of data) {
 			for (let i = 0; i < array.length; i++) {
-				if (i === 4) {
+				if (i === 1) {
+					result[i] = "";
+				} else if (i === 5) {
 					const totalValue =
 						Number.parseFloat(String(result[i])) +
 						Number.parseFloat(String(array[i]));
@@ -59,17 +62,28 @@ const PrintPage = () => {
 	tables.forEach((table: CellValue[], tableIndex: number) => {
 		const displayCells: ReactNode[] = [];
 		const cells: CellValue[] = [];
+		displayCells.push(
+			<td
+				key={`no-${tableIndex}`}
+				className="text-xs text-center font-medium text-gray-700"
+			>
+				{setx}
+			</td>,
+		);
+		cells.push(setx);
 		table.forEach((row: CellValue, colIndex: number) => {
 			if (colIndex === 0) {
-				displayCells.push(
-					<td
-						key={`cell-${tableIndex}-${colIndex}`}
-						className="text-xs text-center font-medium text-gray-700"
-					>
-						{setx}
-					</td>,
-				);
-				cells.push(setx);
+				if (showPileNo) {
+					displayCells.push(
+						<td
+							key={`cell-${tableIndex}-${colIndex}`}
+							className="text-xs text-center"
+						>
+							{row}
+						</td>,
+					);
+				}
+				cells.push(row);
 				setx++;
 			} else {
 				displayCells.push(
@@ -101,6 +115,9 @@ const PrintPage = () => {
 					Total :
 				</td>,
 			);
+		else if (index === 1) {
+			if (showPileNo) totalCells.push(<td key={`total-${index}`} />);
+		}
 		else
 			totalCells.push(
 				<td key={`total-${index}`} className="font-bold text-sm text-center">
@@ -144,7 +161,8 @@ const PrintPage = () => {
 			<table className="my-2.5 mx-auto">
 				<thead>
 					<tr className="bg-gray-100 text-xs">
-						<th>PILE NO</th>
+						<th>{showPileNo ? "NO." : "PILE NO"}</th>
+						{showPileNo && <th>PILE NO</th>}
 						<th>PILE LENGTHS 6 METER</th>
 						<th>PILE LENGTHS 3 METER</th>
 						<th>JOINTS NO</th>
