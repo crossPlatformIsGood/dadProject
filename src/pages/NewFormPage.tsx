@@ -1,110 +1,50 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "@/components/PageTitle";
+import { ROW_COL, ROW_LENGTH } from "@/lib/columns";
+import { sanitizeDecimal, sanitizeInteger } from "@/lib/sanitize";
+import { loadFormConfig, loadPrintData, savePrintData } from "@/lib/storage";
+import type { PrintData } from "@/schemas/FormSchema";
+
+type Cell = string | number;
 
 const NewFormPage = () => {
 	const navigate = useNavigate();
-	const formInfo = localStorage.getItem("formD");
-	const converttoJsonFormPage = formInfo ? JSON.parse(formInfo) : null;
-	const showPileNo = !!converttoJsonFormPage?.showPileNo;
 
-	const printData = localStorage.getItem("printData");
-	const convertedToJsonPrintData = printData ? JSON.parse(printData) : null;
+	const formConfig = useMemo(loadFormConfig, []);
+	const existingPrintData = useMemo(loadPrintData, []);
 
-	const x = converttoJsonFormPage
-		? converttoJsonFormPage.maxNum - converttoJsonFormPage.minNum
-		: 0;
+	const rowCount = formConfig ? formConfig.maxNum - formConfig.minNum + 1 : 0;
 
-	const [values, setValues] = useState<(string | number)[][]>(
-		convertedToJsonPrintData?.table ||
-			Array.from({ length: x + 1 }, () => Array(5).fill("")),
+	const [values, setValues] = useState<Cell[][]>(
+		existingPrintData?.table ??
+			Array.from({ length: rowCount }, () => Array(ROW_LENGTH).fill("")),
 	);
-	const [project, setProject] = useState(
-		convertedToJsonPrintData?.project ?? "",
-	);
-	const [project2, setProject2] = useState(
-		convertedToJsonPrintData?.project2 ?? "",
-	);
-	const [pile, setPile] = useState(convertedToJsonPrintData?.pile ?? "");
-	const [date, setDate] = useState(convertedToJsonPrintData?.date ?? "");
+	const [project, setProject] = useState(existingPrintData?.project ?? "");
+	const [project2, setProject2] = useState(existingPrintData?.project2 ?? "");
+	const [pile, setPile] = useState(existingPrintData?.pile ?? "");
+	const [date, setDate] = useState(existingPrintData?.date ?? "");
 
-	if (!converttoJsonFormPage) return <div>No form</div>;
+	if (!formConfig) return <div>没有该数据</div>;
+	const showPileNo = !!formConfig.showPileNo;
 
-	const rows = [];
-	for (let i = 0; i <= x; i++) {
-		const cells = [];
-		cells.push(
-			<td
-				key="no"
-				className="text-sm text-center font-medium text-gray-700 px-2"
-			>
-				{converttoJsonFormPage.minNum + i}
-			</td>,
-		);
-		for (let j = 0; j < 5; j++) {
-			if (j === 0) {
-				if (showPileNo) {
-					cells.push(
-						<td key={j}>
-							<input
-								type="number"
-								name="mm"
-								autoComplete="off"
-								className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-								value={values[i][j]}
-								onChange={(e) => handleChange(e.target.value, i, j)}
-							/>
-						</td>,
-					);
-				}
-			} else if (j === 4) {
-				cells.push(
-					<td key={j}>
-						<input
-							type="number"
-							name="mm"
-							autoComplete="off"
-							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-							pattern="^\d+(?:\.\d{1,2})?$"
-							value={values[i][j]}
-							onChange={(e) => handleDecimalChange(e.target.value, i, j)}
-						/>
-					</td>,
-				);
-			} else {
-				cells.push(
-					<td key={j}>
-						<input
-							type="number"
-							name="mm"
-							autoComplete="off"
-							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={values[i][j]}
-							onChange={(e) => handleChange(e.target.value, i, j)}
-						/>
-					</td>,
-				);
-			}
-		}
-		rows.push(
-			<tr key={i} className="even:bg-gray-50">
-				{cells}
-			</tr>,
-		);
-	}
-
-	const handleChange = (value: string, rowIndex: number, colIndex: number) => {
-		const regex = /^\d*$/;
-		if (regex.test(value)) {
-			// replace 0 to number
-			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
-			const newValues = values.map((row, i) =>
+	const updateCell = (rowIndex: number, colIndex: number, next: string) => {
+		setValues((prev) =>
+			prev.map((row, i) =>
 				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? sanitizedValue : cell))
+					? row.map((cell, j) => (j === colIndex ? next : cell))
 					: row,
-			);
-			setValues(newValues);
-		}
+			),
+		);
+	};
+
+	const handleIntegerChange = (
+		value: string,
+		rowIndex: number,
+		colIndex: number,
+	) => {
+		const sanitized = sanitizeInteger(value);
+		if (sanitized !== null) updateCell(rowIndex, colIndex, sanitized);
 	};
 
 	const handleDecimalChange = (
@@ -112,53 +52,34 @@ const NewFormPage = () => {
 		rowIndex: number,
 		colIndex: number,
 	) => {
-		const regex = /^\d*\.?\d{0,2}$/;
-
-		if (regex.test(value)) {
-			const sanitizedValue = value.replace(/^0+(?=\d)/, "");
-			const newValues = values.map((row, i) =>
-				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? sanitizedValue : cell))
-					: row,
-			);
-			setValues(newValues);
-		}
+		const sanitized = sanitizeDecimal(value);
+		if (sanitized !== null) updateCell(rowIndex, colIndex, sanitized);
 	};
 
-	const getSaveArray = () => {
-		const mmValues = values.map((rows) =>
-			rows.map((row, j) =>
-				j === 0 ? row : row === "" ? 0 : Number(row),
+	const buildPrintData = (): PrintData => ({
+		project,
+		project2,
+		pile,
+		date,
+		table: values.map((row) =>
+			row.map((cell, j) =>
+				j === ROW_COL.PILE_NO ? cell : cell === "" ? 0 : Number(cell),
 			),
-		);
-		const printData = {
-			project,
-			project2,
-			pile,
-			date,
-			table: mmValues,
-		};
+		),
+	});
 
-		localStorage.setItem("printData", JSON.stringify(printData));
+	const handleSave = () => {
+		savePrintData(buildPrintData());
 		navigate("/print");
 	};
 
-	const getCopy = () => {
-		const mmValues = values.map((rows) =>
-			rows.map((row, j) =>
-				j === 0 ? row : row === "" ? 0 : Number(row),
-			),
-		);
-		const printData = {
-			project,
-			project2,
-			pile,
-			date,
-			table: mmValues,
-		};
-		localStorage.setItem("printData", JSON.stringify(printData));
+	const handleCopy = () => {
+		savePrintData(buildPrintData());
 		navigate("/copy");
 	};
+
+	const inputClass =
+		"bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300";
 
 	return (
 		<div>
@@ -220,11 +141,9 @@ const NewFormPage = () => {
 				<table className="border-collapse mx-auto mt-5">
 					<thead>
 						<tr className="bg-gray-100">
-							<th className="text-sm font-semibold text-gray-700">{showPileNo ? 'NO.': 'PILE NO'}</th>
+							<th className="text-sm font-semibold text-gray-700">NO.</th>
 							{showPileNo && (
-								<th className="text-sm font-semibold text-gray-700">
-									PILE NO
-								</th>
+								<th className="text-sm font-semibold text-gray-700">PILE NO</th>
 							)}
 							<th className="text-sm font-semibold text-gray-700">
 								PILE LENGTHS 6 METER
@@ -234,25 +153,119 @@ const NewFormPage = () => {
 							</th>
 							<th className="text-sm font-semibold text-gray-700">JOINTS NO</th>
 							<th className="text-sm font-semibold text-gray-700 uppercase">
-								{converttoJsonFormPage.role}
+								{formConfig.role}
 							</th>
 						</tr>
 					</thead>
-					<tbody>{rows}</tbody>
+					<tbody>
+						{values.map((row, rowIndex) => (
+							<tr
+								key={`row-${formConfig.minNum + rowIndex}`}
+								className="even:bg-gray-50"
+							>
+								<td className="text-sm text-center font-medium text-gray-700 px-2">
+									{formConfig.minNum + rowIndex}
+								</td>
+								{showPileNo && (
+									<td>
+										<input
+											type="number"
+											autoComplete="off"
+											aria-label={`Row ${rowIndex + 1} pile number`}
+											className={inputClass}
+											value={row[ROW_COL.PILE_NO]}
+											onChange={(e) =>
+												handleIntegerChange(
+													e.target.value,
+													rowIndex,
+													ROW_COL.PILE_NO,
+												)
+											}
+										/>
+									</td>
+								)}
+								<td>
+									<input
+										type="number"
+										autoComplete="off"
+										aria-label={`Row ${rowIndex + 1} 6-meter count`}
+										className={inputClass}
+										value={row[ROW_COL.SIX_M]}
+										onChange={(e) =>
+											handleIntegerChange(
+												e.target.value,
+												rowIndex,
+												ROW_COL.SIX_M,
+											)
+										}
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										autoComplete="off"
+										aria-label={`Row ${rowIndex + 1} 3-meter count`}
+										className={inputClass}
+										value={row[ROW_COL.THREE_M]}
+										onChange={(e) =>
+											handleIntegerChange(
+												e.target.value,
+												rowIndex,
+												ROW_COL.THREE_M,
+											)
+										}
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										autoComplete="off"
+										aria-label={`Row ${rowIndex + 1} joints count`}
+										className={inputClass}
+										value={row[ROW_COL.JOINTS]}
+										onChange={(e) =>
+											handleIntegerChange(
+												e.target.value,
+												rowIndex,
+												ROW_COL.JOINTS,
+											)
+										}
+									/>
+								</td>
+								<td>
+									<input
+										type="number"
+										autoComplete="off"
+										aria-label={`Row ${rowIndex + 1} penetration`}
+										pattern="^\d+(?:\.\d{1,2})?$"
+										className={inputClass}
+										value={row[ROW_COL.PENETRATION]}
+										onChange={(e) =>
+											handleDecimalChange(
+												e.target.value,
+												rowIndex,
+												ROW_COL.PENETRATION,
+											)
+										}
+									/>
+								</td>
+							</tr>
+						))}
+					</tbody>
 				</table>
 
 				<div className="flex justify-center gap-3 pt-5">
 					<button
 						className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 						type="button"
-						onClick={getSaveArray}
+						onClick={handleSave}
 					>
 						保存
 					</button>
 					<button
 						className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 						type="button"
-						onClick={getCopy}
+						onClick={handleCopy}
 					>
 						复制
 					</button>

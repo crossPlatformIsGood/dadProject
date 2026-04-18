@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import type { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import {
 	Form,
@@ -18,24 +17,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/Select";
-import formSchema from "@/schemas/FormSchema";
+import { saveFormConfig } from "@/lib/storage";
+import formSchema, { type FormConfig } from "@/schemas/FormSchema";
 
 const HomePage = () => {
 	const navigate = useNavigate();
 
-	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		const jsonData = JSON.stringify(data);
-
-		try {
-			localStorage.setItem("formD", jsonData);
-		} catch (e) {
-			console.error("Storage error", e);
-		}
-
+	const onSubmit = (data: FormConfig) => {
+		saveFormConfig(data);
 		navigate("/newform");
 	};
 
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm<FormConfig>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			role: "meter",
