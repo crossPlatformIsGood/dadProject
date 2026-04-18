@@ -46,3 +46,11 @@ export function loadPrintData(): PrintData | null {
 export function savePrintData(data: PrintData): void {
 	write(PRINT_KEY, data);
 }
+
+export function clearPrintData(): void {
+	try {
+		sessionStorage.removeItem(PRINT_KEY);
+	} catch (e) {
+		console.error(`sessionStorage remove failed for ${PRINT_KEY}`, e);
+	}
+}
