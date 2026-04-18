@@ -12,12 +12,15 @@ const NewFormPage = () => {
 	const navigate = useNavigate();
 
 	const formConfig = useMemo(loadFormConfig, []);
-	const existingPrintData = useMemo(loadPrintData, []);
-
 	const rowCount = formConfig ? formConfig.maxNum - formConfig.minNum + 1 : 0;
+	const existingPrintData = useMemo(() => {
+		const data = loadPrintData();
+		return data && data.table.length === rowCount ? data : null;
+	}, [rowCount]);
 
 	const [values, setValues] = useState<Cell[][]>(
-		existingPrintData?.table ??
+		() =>
+			existingPrintData?.table ??
 			Array.from({ length: rowCount }, () => Array(ROW_LENGTH).fill("")),
 	);
 	const [project, setProject] = useState(existingPrintData?.project ?? "");

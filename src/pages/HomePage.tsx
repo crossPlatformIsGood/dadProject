@@ -17,13 +17,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/Select";
-import { saveFormConfig } from "@/lib/storage";
+import { clearPrintData, saveFormConfig } from "@/lib/storage";
 import formSchema, { type FormConfig } from "@/schemas/FormSchema";
 
 const HomePage = () => {
 	const navigate = useNavigate();
 
 	const onSubmit = (data: FormConfig) => {
+		clearPrintData();
 		saveFormConfig(data);
 		navigate("/newform");
 	};
