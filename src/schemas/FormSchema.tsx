@@ -12,4 +12,18 @@ const formSchema = z
 		path: ["maxNum"],
 	});
 
+export type FormConfig = z.infer<typeof formSchema>;
+
+const cellSchema = z.union([z.string(), z.number()]);
+
+export const printDataSchema = z.object({
+	project: z.string(),
+	project2: z.string(),
+	pile: z.string(),
+	date: z.string(),
+	table: z.array(z.array(cellSchema)),
+});
+
+export type PrintData = z.infer<typeof printDataSchema>;
+
 export default formSchema;

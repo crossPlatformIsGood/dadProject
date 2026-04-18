@@ -2,12 +2,12 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json yarn.lock .yarnrc.yml ./
 
-RUN npm i
+RUN corepack enable && yarn install --frozen-lockfile
 
 COPY . .
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev"]
+CMD ["yarn", "dev"]
