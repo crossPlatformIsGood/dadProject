@@ -1,5 +1,4 @@
 import "./App.css";
-import { useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CopyPage from "./pages/CopyPage";
 import HomePage from "./pages/HomePage";
@@ -7,9 +6,6 @@ import NewFormPage from "./pages/NewFormPage";
 import PrintPage from "./pages/PrintPage";
 
 function App() {
-	useEffect(() => {
-		localStorage.clear();
-	}, []);
 	return (
 		<Router basename={import.meta.env.BASE_URL}>
 			<Routes>

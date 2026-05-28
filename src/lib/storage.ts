@@ -1,33 +1,56 @@
-export type FormD = {
-	maxNum: number;
-	minNum: number;
-	role: string;
-};
+import formSchema, {
+	type FormConfig,
+	type PrintData,
+	printDataSchema,
+} from "@/schemas/FormSchema";
 
-export type CellValue = string | number;
+const FORM_KEY = "formD";
+const PRINT_KEY = "printData";
 
-export type PrintData = {
-	project: string;
-	project2: string;
-	pile: string;
-	table: CellValue[][];
-};
-
-const FORM_D_KEY = "formD";
-const PRINT_DATA_KEY = "printData";
-
-export function getFormD(): FormD | null {
-	const raw = localStorage.getItem(FORM_D_KEY);
-	if (!raw) return null;
-	return JSON.parse(raw) as FormD;
+function read<T>(key: string, parser: (raw: unknown) => T | null): T | null {
+	try {
+		const raw = sessionStorage.getItem(key);
+		if (!raw) return null;
+		return parser(JSON.parse(raw));
+	} catch {
+		return null;
+	}
 }
 
-export function getPrintData(): PrintData | null {
-	const raw = localStorage.getItem(PRINT_DATA_KEY);
-	if (!raw) return null;
-	return JSON.parse(raw) as PrintData;
+function write(key: string, value: unknown): void {
+	try {
+		sessionStorage.setItem(key, JSON.stringify(value));
+	} catch (e) {
+		console.error(`sessionStorage write failed for ${key}`, e);
+	}
 }
 
-export function setPrintData(data: PrintData): void {
-	localStorage.setItem(PRINT_DATA_KEY, JSON.stringify(data));
+export function loadFormConfig(): FormConfig | null {
+	return read(FORM_KEY, (raw) => {
+		const parsed = formSchema.safeParse(raw);
+		return parsed.success ? parsed.data : null;
+	});
+}
+
+export function saveFormConfig(config: FormConfig): void {
+	write(FORM_KEY, config);
+}
+
+export function loadPrintData(): PrintData | null {
+	return read(PRINT_KEY, (raw) => {
+		const parsed = printDataSchema.safeParse(raw);
+		return parsed.success ? parsed.data : null;
+	});
+}
+
+export function savePrintData(data: PrintData): void {
+	write(PRINT_KEY, data);
+}
+
+export function clearPrintData(): void {
+	try {
+		sessionStorage.removeItem(PRINT_KEY);
+	} catch (e) {
+		console.error(`sessionStorage remove failed for ${PRINT_KEY}`, e);
+	}
 }

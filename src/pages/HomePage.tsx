@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import type { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import {
 	Form,
@@ -18,29 +17,25 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/Select";
-import formSchema from "@/schemas/FormSchema";
+import { clearPrintData, saveFormConfig } from "@/lib/storage";
+import formSchema, { type FormConfig } from "@/schemas/FormSchema";
 
 const HomePage = () => {
 	const navigate = useNavigate();
 
-	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		const jsonData = JSON.stringify(data);
-
-		try {
-			localStorage.setItem("formD", jsonData);
-		} catch (e) {
-			console.error("Storage error", e);
-		}
-
+	const onSubmit = (data: FormConfig) => {
+		clearPrintData();
+		saveFormConfig(data);
 		navigate("/newform");
 	};
 
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm<FormConfig>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			role: "meter",
 			minNum: 1,
 			maxNum: 2,
+			showPileNo: false,
 		},
 	});
 
@@ -139,6 +134,38 @@ const HomePage = () => {
 							}}
 						/>
 					</div>
+
+					<FormField
+						control={form.control}
+						name="showPileNo"
+						render={({ field }) => (
+							<FormItem>
+								<label className="flex items-center justify-between gap-3 rounded-md bg-white border border-blue-200 px-4 py-2.5 cursor-pointer hover:border-blue-300 transition-colors">
+									<span className="text-sm font-medium text-gray-700">
+										开启 PILE NO
+									</span>
+									<FormControl>
+										<button
+											type="button"
+											role="switch"
+											aria-checked={!!field.value}
+											onClick={() => field.onChange(!field.value)}
+											className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 ${
+												field.value ? "bg-blue-500" : "bg-gray-300"
+											}`}
+										>
+											<span
+												className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+													field.value ? "translate-x-5" : "translate-x-0.5"
+												}`}
+											/>
+										</button>
+									</FormControl>
+								</label>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
 					<Button type="submit" size="lg" className="w-full">
 						提交

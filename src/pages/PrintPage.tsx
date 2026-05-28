@@ -1,125 +1,91 @@
 import type { ReactNode } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./printpage.css";
 import PageTitle from "@/components/PageTitle";
+import { PRINT_COL } from "@/lib/columns";
+import { loadFormConfig, loadPrintData } from "@/lib/storage";
 
-type CellValue = string | number;
+type Cell = string | number;
+
+function toNumber(value: Cell): number {
+	const n = typeof value === "number" ? value : Number.parseFloat(value);
+	return Number.isFinite(n) ? n : 0;
+}
+
+function hasDecimalBeyondOne(rows: Cell[][]): boolean {
+	for (const row of rows) {
+		const pen = row[PRINT_COL.PENETRATION];
+		if (pen === undefined) continue;
+		const str = String(pen);
+		const dotIdx = str.indexOf(".");
+		if (dotIdx !== -1 && str.length - dotIdx - 1 > 1) return true;
+	}
+	return false;
+}
+
+function sumRows(rows: Cell[][]): Cell[] {
+	if (rows.length === 0) return [];
+	const decimals = hasDecimalBeyondOne(rows) ? 2 : 1;
+	const width = rows[0].length;
+	const totals = new Array<number>(width).fill(0);
+
+	for (const row of rows) {
+		for (let i = 0; i < width; i++) {
+			if (i === PRINT_COL.NO || i === PRINT_COL.PILE_NO) continue;
+			totals[i] += toNumber(row[i]);
+		}
+	}
+
+	return totals.map((total, i) => {
+		if (i === PRINT_COL.PILE_NO) return "";
+		if (i === PRINT_COL.PENETRATION) return total.toFixed(decimals);
+		return total;
+	});
+}
 
 const PrintPage = () => {
 	const navigate = useNavigate();
-	const printData = localStorage.getItem("printData");
-	const formInfo = localStorage.getItem("formD");
-	if (!formInfo) return <>没有该数据</>;
-	const converttoJsonFormInfo = JSON.parse(formInfo);
-	let setx = converttoJsonFormInfo.minNum;
+	const formConfig = useMemo(loadFormConfig, []);
+	const printData = useMemo(loadPrintData, []);
 
+	if (!formConfig) return <>没有该数据</>;
 	if (!printData) return <>没有该数据</>;
-	const convertedToJsonPrintData = JSON.parse(printData);
-	const project = convertedToJsonPrintData.project;
-	const project2 = convertedToJsonPrintData.project2;
-	const pile = convertedToJsonPrintData.pile;
-	const tables: CellValue[][] = convertedToJsonPrintData.table;
-	const displayRows: ReactNode[] = [];
-	const rows: CellValue[][] = [];
 
-	function sumArrays(data: CellValue[][]): (string | number)[] {
-		if (data.length === 0) return [];
-		let checkDecimal = 1;
-		const result: (string | number)[] = new Array(data[0].length).fill(0);
-		for (const array of data) {
-			const value = array[4];
-			if (typeof value === "number" || typeof value === "string") {
-				const str = value.toString();
-				if (str.includes(".")) {
-					const decimals = str.split(".")[1].length;
-					if (decimals > 1) {
-						checkDecimal = 2;
-						break;
-					}
-				}
-			}
-		}
+	const showPileNo = !!formConfig.showPileNo;
+	const { project, project2, pile, date, table } = printData;
 
-		for (const array of data) {
-			for (let i = 0; i < array.length; i++) {
-				if (i === 4) {
-					const totalValue =
-						Number.parseFloat(String(result[i])) +
-						Number.parseFloat(String(array[i]));
-					result[i] = totalValue.toFixed(checkDecimal);
-				} else
-					result[i] = Number(result[i]) + Number.parseInt(String(array[i]), 10);
-			}
-		}
+	const printedRows: Cell[][] = table.map((row, i) => [
+		formConfig.minNum + i,
+		...row,
+	]);
 
-		return result;
-	}
+	const totals = sumRows(printedRows);
 
-	tables.forEach((table: CellValue[], tableIndex: number) => {
-		const displayCells: ReactNode[] = [];
-		const cells: CellValue[] = [];
-		table.forEach((row: CellValue, colIndex: number) => {
-			if (colIndex === 0) {
-				displayCells.push(
-					<td
-						key={`cell-${tableIndex}-${colIndex}`}
-						className="text-xs text-center font-medium text-gray-700"
-					>
-						{setx}
-					</td>,
-				);
-				cells.push(setx);
-				setx++;
-			} else {
-				displayCells.push(
-					<td
-						key={`cell-${tableIndex}-${colIndex}`}
-						className="text-xs text-center"
-					>
-						{row}
-					</td>,
-				);
-				cells.push(row);
-			}
-		});
-
-		displayRows.push(
-			<tr key={`row-${tableIndex}`} className="even:bg-gray-50">
-				{displayCells}
-			</tr>,
-		);
-		rows.push(cells);
-	});
-
-	const results = sumArrays(rows);
-	const totalCells: ReactNode[] = [];
-	results.forEach((result: string | number, index: number) => {
-		if (index === 0)
-			totalCells.push(
-				<td key="total-label" className="font-bold text-sm">
-					Total :
-				</td>,
-			);
-		else
-			totalCells.push(
-				<td key={`total-${index}`} className="font-bold text-sm text-center">
-					{result}
-				</td>,
-			);
-	});
-	displayRows.push(
-		<tr key="tt" className="bg-amber-50 border-t-2 border-gray-400">
-			{totalCells}
-		</tr>,
+	const renderDataRow = (row: Cell[], rowIndex: number): ReactNode => (
+		<tr key={`row-${rowIndex}`} className="even:bg-gray-50">
+			<td className="text-xs text-center font-medium text-gray-700">
+				{row[PRINT_COL.NO]}
+			</td>
+			{showPileNo && (
+				<td className="text-xs text-center">{row[PRINT_COL.PILE_NO]}</td>
+			)}
+			<td className="text-xs text-center">{row[PRINT_COL.SIX_M]}</td>
+			<td className="text-xs text-center">{row[PRINT_COL.THREE_M]}</td>
+			<td className="text-xs text-center">{row[PRINT_COL.JOINTS]}</td>
+			<td className="text-xs text-center">{row[PRINT_COL.PENETRATION]}</td>
+		</tr>
 	);
-
-	const editPage = () => {
-		navigate("/newform");
-	};
 
 	return (
 		<div>
 			<PageTitle />
+			{date && (
+				<div className="max-w-2xl mx-auto text-end mb-1">
+					<span className="font-bold text-sm">DATE: </span>
+					<span className="underline">{date}</span>
+				</div>
+			)}
 			<div className="max-w-2xl mx-auto space-y-1 mb-4">
 				<div className="text-start">
 					<span className="font-bold text-sm">PROJECT: </span>
@@ -137,14 +103,33 @@ const PrintPage = () => {
 			<table className="my-2.5 mx-auto">
 				<thead>
 					<tr className="bg-gray-100 text-xs">
-						<th>PILE NO</th>
+						<th>NO.</th>
+						{showPileNo && <th>PILE NO</th>}
 						<th>PILE LENGTHS 6 METER</th>
 						<th>PILE LENGTHS 3 METER</th>
 						<th>JOINTS NO</th>
-						<th className="uppercase">{converttoJsonFormInfo.role}</th>
+						<th className="uppercase">{formConfig.role}</th>
 					</tr>
 				</thead>
-				<tbody>{displayRows}</tbody>
+				<tbody>
+					{printedRows.map(renderDataRow)}
+					<tr className="bg-amber-50 border-t-2 border-gray-400">
+						<td className="font-bold text-sm">Total :</td>
+						{showPileNo && <td />}
+						<td className="font-bold text-sm text-center">
+							{totals[PRINT_COL.SIX_M]}
+						</td>
+						<td className="font-bold text-sm text-center">
+							{totals[PRINT_COL.THREE_M]}
+						</td>
+						<td className="font-bold text-sm text-center">
+							{totals[PRINT_COL.JOINTS]}
+						</td>
+						<td className="font-bold text-sm text-center">
+							{totals[PRINT_COL.PENETRATION]}
+						</td>
+					</tr>
+				</tbody>
 			</table>
 
 			<div className="flex justify-center gap-3 mb-10">
@@ -159,7 +144,7 @@ const PrintPage = () => {
 				<button
 					type="button"
 					id="e"
-					onClick={editPage}
+					onClick={() => navigate("/newform")}
 					className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 				>
 					修改
