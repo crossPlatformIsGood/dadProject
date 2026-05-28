@@ -1,137 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FormTable from "@/components/FormTable";
 import PageTitle from "@/components/PageTitle";
+import { getFormD, getPrintData, setPrintData } from "@/lib/storage";
+import { useFormTable } from "./hooks/useFormTable";
+
+const labelInputClass =
+	"bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300";
 
 const NewFormPage = () => {
 	const navigate = useNavigate();
-	const formInfo = localStorage.getItem("formD");
-	const converttoJsonFormPage = formInfo ? JSON.parse(formInfo) : null;
+	const formD = getFormD();
+	const printData = getPrintData();
 
-	const printData = localStorage.getItem("printData");
-	const convertedToJsonPrintData = printData ? JSON.parse(printData) : null;
+	const rows = formD ? formD.maxNum - formD.minNum + 1 : 0;
+	const { values, setCell, setCellDecimal, toNumericMatrix } = useFormTable({
+		rows,
+		cols: 5,
+		initial: printData?.table,
+	});
 
-	const x = converttoJsonFormPage
-		? converttoJsonFormPage.maxNum - converttoJsonFormPage.minNum
-		: 0;
+	const [project, setProject] = useState(printData?.project ?? "");
+	const [project2, setProject2] = useState(printData?.project2 ?? "");
+	const [pile, setPile] = useState(printData?.pile ?? "");
 
-	const [values, setValues] = useState<(string | number)[][]>(
-		convertedToJsonPrintData?.table ||
-			Array.from({ length: x + 1 }, () => Array(5).fill("")),
-	);
-	const [project, setProject] = useState(
-		convertedToJsonPrintData?.project ?? "",
-	);
-	const [project2, setProject2] = useState(
-		convertedToJsonPrintData?.project2 ?? "",
-	);
-	const [pile, setPile] = useState(convertedToJsonPrintData?.pile ?? "");
+	if (!formD) return <div>No form</div>;
 
-	if (!converttoJsonFormPage) return <div>No form</div>;
-
-	const rows = [];
-	let setx = converttoJsonFormPage.minNum;
-	for (let i = 0; i <= x; i++) {
-		const cells = [];
-		for (let j = 0; j < 5; j++) {
-			if (j === 0) {
-				cells.push(
-					<td key={j} className="text-center font-medium text-gray-700">
-						{setx}
-					</td>,
-				);
-				setx++;
-			} else if (j === 4) {
-				cells.push(
-					<td key={j}>
-						<input
-							type="number"
-							name="mm"
-							autoComplete="off"
-							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-							pattern="^\d+(?:\.\d{1,2})?$"
-							value={values[i][j]}
-							onChange={(e) => handleDecimalChange(e.target.value, i, j)}
-						/>
-					</td>,
-				);
-			} else {
-				cells.push(
-					<td key={j}>
-						<input
-							type="number"
-							name="mm"
-							autoComplete="off"
-							className="bg-white border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-							value={values[i][j]}
-							onChange={(e) => handleChange(e.target.value, i, j)}
-						/>
-					</td>,
-				);
-			}
-		}
-		rows.push(
-			<tr key={i} className="even:bg-gray-50">
-				{cells}
-			</tr>,
-		);
-	}
-
-	const handleChange = (value: string, rowIndex: number, colIndex: number) => {
-		const regex = /^\d*$/;
-		if (regex.test(value)) {
-			const newValues = values.map((row, i) =>
-				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? value : cell))
-					: row,
-			);
-			setValues(newValues);
-		}
-	};
-
-	const handleDecimalChange = (
-		value: string,
-		rowIndex: number,
-		colIndex: number,
-	) => {
-		const regex = /^\d*\.?\d{0,2}$/;
-
-		if (regex.test(value)) {
-			const newValues = values.map((row, i) =>
-				i === rowIndex
-					? row.map((cell, j) => (j === colIndex ? value : cell))
-					: row,
-			);
-			setValues(newValues);
-		}
-	};
-
-	const getSaveArray = () => {
-		const mmValues = values.map((rows) =>
-			rows.map((row) => (row.toString() === "" ? 0 : row)),
-		);
-		const printData = {
+	const saveAndGo = (path: "/print" | "/copy") => {
+		setPrintData({
 			project,
 			project2,
 			pile,
-			table: mmValues,
-		};
-
-		localStorage.setItem("printData", JSON.stringify(printData));
-		navigate("/print");
-	};
-
-	const getCopy = () => {
-		const mmValues = values.map((rows) =>
-			rows.map((row) => (row.toString() === "" ? 0 : row)),
-		);
-		const printData = {
-			project,
-			project2,
-			pile,
-			table: mmValues,
-		};
-		localStorage.setItem("printData", JSON.stringify(printData));
-		navigate("/copy");
+			table: toNumericMatrix(),
+		});
+		navigate(path);
 	};
 
 	return (
@@ -147,7 +49,7 @@ const NewFormPage = () => {
 							type="text"
 							maxLength={100}
 							name="p1"
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+							className={labelInputClass}
 							value={project}
 							onChange={(e) => setProject(e.target.value)}
 						/>
@@ -157,7 +59,7 @@ const NewFormPage = () => {
 						<input
 							type="text"
 							maxLength={100}
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+							className={labelInputClass}
 							value={project2}
 							onChange={(e) => setProject2(e.target.value)}
 						/>
@@ -169,44 +71,33 @@ const NewFormPage = () => {
 						<input
 							type="text"
 							maxLength={100}
-							className="bg-white border border-gray-300 rounded-md px-3 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-300"
+							className={labelInputClass}
 							value={pile}
 							onChange={(e) => setPile(e.target.value)}
 						/>
 					</div>
 				</div>
 
-				<table className="border-collapse mx-auto mt-5">
-					<thead>
-						<tr className="bg-gray-100">
-							<th className="text-sm font-semibold text-gray-700">PILE NO</th>
-							<th className="text-sm font-semibold text-gray-700">
-								PILE LENGTHS 6 METER
-							</th>
-							<th className="text-sm font-semibold text-gray-700">
-								PILE LENGTHS 3 METER
-							</th>
-							<th className="text-sm font-semibold text-gray-700">JOINTS NO</th>
-							<th className="text-sm font-semibold text-gray-700 uppercase">
-								{converttoJsonFormPage.role}
-							</th>
-						</tr>
-					</thead>
-					<tbody>{rows}</tbody>
-				</table>
+				<FormTable
+					values={values}
+					minNum={formD.minNum}
+					roleLabel={formD.role}
+					onChange={setCell}
+					onDecimalChange={setCellDecimal}
+				/>
 
 				<div className="flex justify-center gap-3 pt-5">
 					<button
 						className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 						type="button"
-						onClick={getSaveArray}
+						onClick={() => saveAndGo("/print")}
 					>
 						保存
 					</button>
 					<button
 						className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 						type="button"
-						onClick={getCopy}
+						onClick={() => saveAndGo("/copy")}
 					>
 						复制
 					</button>
