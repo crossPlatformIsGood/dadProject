@@ -88,20 +88,20 @@ const NewFormPage = () => {
 	};
 
 	const inputClass =
-		"bg-surface border border-rule rounded-lg px-2 py-1.5 w-full tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-lg px-3 py-2.5 w-full text-base tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	const metaInputClass =
-		"bg-surface border border-rule rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	return (
-		<div className="max-w-4xl mx-auto px-4 py-6">
-			<form>
+		<div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
+			<form className="space-y-8">
 				<PageTitle />
-				<div className="max-w-2xl mx-auto">
-					<div className="flex items-center justify-end gap-3 mb-3">
+				<div className="max-w-2xl mx-auto space-y-4">
+					<div className="flex items-center justify-end gap-3">
 						<label
 							htmlFor="meta-date"
-							className="text-sm font-medium text-ink-soft shrink-0"
+							className="text-base font-medium text-ink-soft shrink-0"
 						>
 							日期
 						</label>
@@ -115,11 +115,11 @@ const NewFormPage = () => {
 							onChange={(e) => setDate(e.target.value)}
 						/>
 					</div>
-					<div className="space-y-3">
+					<div className="space-y-4">
 						<div className="flex items-center gap-3">
 							<label
 								htmlFor="meta-project"
-								className="text-sm font-medium text-ink-soft w-[120px] text-right shrink-0"
+								className="text-base font-medium text-ink-soft w-[120px] text-right shrink-0"
 							>
 								Project
 							</label>
@@ -147,7 +147,7 @@ const NewFormPage = () => {
 						<div className="flex items-center gap-3">
 							<label
 								htmlFor="meta-pile"
-								className="text-sm font-medium text-ink-soft w-[120px] text-right shrink-0"
+								className="text-base font-medium text-ink-soft w-[120px] text-right shrink-0"
 							>
 								Size of pile
 							</label>
@@ -163,28 +163,28 @@ const NewFormPage = () => {
 					</div>
 				</div>
 
-				<div className="mt-6 bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
+				<div className="bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
 					<table className="border-collapse mx-auto w-full">
 						<thead>
 							<tr className="bg-paper-strong">
-								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+								<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 									NO.
 								</th>
 								{showPileNo && (
-									<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 										PILE NO
 									</th>
 								)}
-								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+								<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 									PILE LENGTHS 6 METER
 								</th>
-								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+								<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 									PILE LENGTHS 3 METER
 								</th>
-								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+								<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 									JOINTS NO
 								</th>
-								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+								<th className="text-sm font-semibold text-ink uppercase tracking-wide px-3 py-4">
 									{formConfig.role}
 								</th>
 							</tr>
@@ -195,7 +195,7 @@ const NewFormPage = () => {
 									key={`row-${formConfig.minNum + rowIndex}`}
 									className="border-t border-rule-soft"
 								>
-									<td className="text-sm text-center font-medium text-ink-soft px-2 tabular-nums">
+									<td className="text-base text-center font-medium text-ink-soft px-3 py-1.5 tabular-nums">
 										{formConfig.minNum + rowIndex}
 									</td>
 									{showPileNo && (
