@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "@/components/PageTitle";
+import { Button } from "@/components/ui/Button";
 import { ROW_COL } from "@/lib/columns";
 import { sanitizeDecimal, sanitizeInteger } from "@/lib/sanitize";
 import { loadFormConfig, loadPrintData, savePrintData } from "@/lib/storage";
@@ -60,6 +61,9 @@ type RangeState = { first: string; last: string; value: string };
 
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
+const inputClass =
+	"bg-white border border-gray-300 rounded-md px-2 py-1.5 w-[110px] tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-colors";
+
 const CopyPage = () => {
 	const navigate = useNavigate();
 
@@ -69,6 +73,7 @@ const CopyPage = () => {
 	const [ranges, setRanges] = useState<Record<string, RangeState>>(() =>
 		Object.fromEntries(RANGES.map((r) => [r.key, { ...emptyRange }])),
 	);
+	const [errors, setErrors] = useState<Record<string, string | null>>({});
 
 	if (!formConfig) return <>没有该数据</>;
 	if (!printData) return <>没有该数据</>;
@@ -77,10 +82,10 @@ const CopyPage = () => {
 
 	const updateRange = (key: string, patch: Partial<RangeState>) => {
 		setRanges((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+		setErrors((prev) => (prev[key] ? { ...prev, [key]: null } : prev));
 	};
 
-	const applyRange = (
-		table: (string | number)[][],
+	const validateRange = (
 		state: RangeState,
 		cfg: RangeConfig,
 	): string | null => {
@@ -97,24 +102,38 @@ const CopyPage = () => {
 		if (lastNum < firstNum) return `第二个号码少过${first}`;
 		if (lastNum > maxNum) return `第二个号码不能大于${maxNum}`;
 
+		return null;
+	};
+
+	const applyRange = (
+		table: (string | number)[][],
+		state: RangeState,
+		cfg: RangeConfig,
+	) => {
+		const { first, last, value } = state;
+		if (first === "" && last === "") return;
+		const firstNum = parseInt(first, 10);
+		const lastNum = parseInt(last, 10);
 		const parsedValue = cfg.parser(value);
 		for (let i = firstNum - 1; i < lastNum; i++) {
 			const row = table[i];
 			if (!row) continue;
 			row[cfg.column] = parsedValue;
 		}
-		return null;
 	};
 
 	const handleSubmit = () => {
-		const table = printData.table.map((row) => [...row]);
-
+		const nextErrors: Record<string, string | null> = {};
 		for (const cfg of RANGES) {
-			const error = applyRange(table, ranges[cfg.key], cfg);
-			if (error) {
-				alert(error);
-				return;
-			}
+			nextErrors[cfg.key] = validateRange(ranges[cfg.key], cfg);
+		}
+		setErrors(nextErrors);
+
+		if (Object.values(nextErrors).some((e) => e !== null)) return;
+
+		const table = printData.table.map((row) => [...row]);
+		for (const cfg of RANGES) {
+			applyRange(table, ranges[cfg.key], cfg);
 		}
 
 		savePrintData({ ...printData, table });
@@ -139,73 +158,89 @@ const CopyPage = () => {
 		if (sanitized !== null) updateRange(key, { [field]: sanitized });
 	};
 
-	const inputClass =
-		"bg-white border border-gray-300 rounded-md px-2 py-1.5 w-[100px] focus:outline-none focus:ring-2 focus:ring-blue-300";
-
 	return (
 		<div>
 			<PageTitle summary={false} />
-			<div className="max-w-xl mx-auto space-y-4">
-				{RANGES.map((cfg) => {
-					const isDecimal = cfg.key === "pen";
-					const state = ranges[cfg.key];
-					const onValue = (v: string) =>
-						isDecimal
-							? handleDecimalChange(v, cfg.key, "value")
-							: handleIntegerChange(v, cfg.key, "value");
+			<div className="max-w-xl mx-auto">
+				<div className="rounded-lg border border-gray-200 bg-white shadow-sm p-6 space-y-5">
+					{RANGES.map((cfg, index) => {
+						const isDecimal = cfg.key === "pen";
+						const state = ranges[cfg.key];
+						const error = errors[cfg.key];
+						const onValue = (v: string) =>
+							isDecimal
+								? handleDecimalChange(v, cfg.key, "value")
+								: handleIntegerChange(v, cfg.key, "value");
 
-					return (
-						<div key={cfg.key} className="flex items-center gap-3">
-							<span className="font-medium text-sm text-gray-700 w-[110px] text-right shrink-0">
-								{cfg.label}
-							</span>
-							<input
-								type="number"
-								aria-label={`${cfg.label} first pile`}
-								className={inputClass}
-								value={state.first}
-								onChange={(e) =>
-									handleIntegerChange(e.target.value, cfg.key, "first")
+						return (
+							<div
+								key={cfg.key}
+								className={
+									index > 0 ? "pt-5 border-t border-gray-100" : undefined
 								}
-							/>
-							<span className="text-gray-400">—</span>
-							<input
-								type="number"
-								aria-label={`${cfg.label} last pile`}
-								className={inputClass}
-								value={state.last}
-								onChange={(e) =>
-									handleIntegerChange(e.target.value, cfg.key, "last")
-								}
-							/>
-							<span className="text-sm text-gray-600">支数=</span>
-							<input
-								type="number"
-								aria-label={`${cfg.label} value`}
-								className={inputClass}
-								value={state.value}
-								onChange={(e) => onValue(e.target.value)}
-							/>
-						</div>
-					);
-				})}
-			</div>
+							>
+								<div className="flex items-center gap-3">
+									<span className="font-medium text-sm text-gray-700 w-[110px] text-right shrink-0">
+										{cfg.label}
+									</span>
+									<input
+										type="number"
+										aria-label={`${cfg.label} first pile`}
+										aria-invalid={!!error}
+										className={inputClass}
+										value={state.first}
+										onChange={(e) =>
+											handleIntegerChange(e.target.value, cfg.key, "first")
+										}
+									/>
+									<span className="text-gray-400">—</span>
+									<input
+										type="number"
+										aria-label={`${cfg.label} last pile`}
+										aria-invalid={!!error}
+										className={inputClass}
+										value={state.last}
+										onChange={(e) =>
+											handleIntegerChange(e.target.value, cfg.key, "last")
+										}
+									/>
+									<span className="text-sm text-gray-600">支数=</span>
+									<input
+										type="number"
+										aria-label={`${cfg.label} value`}
+										aria-invalid={!!error}
+										className={inputClass}
+										value={state.value}
+										onChange={(e) => onValue(e.target.value)}
+									/>
+								</div>
+								{error && (
+									<p
+										role="alert"
+										data-testid={`error-${cfg.key}`}
+										className="mt-2 ml-[122px] text-sm font-medium text-red-600"
+									>
+										⚠ {error}
+									</p>
+								)}
+							</div>
+						);
+					})}
+				</div>
 
-			<div className="flex justify-center gap-3 pt-6">
-				<button
-					className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
-					type="button"
-					onClick={handleSubmit}
-				>
-					OK
-				</button>
-				<button
-					className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
-					type="button"
-					onClick={() => navigate("/newform")}
-				>
-					返回
-				</button>
+				<div className="flex justify-center gap-3 pt-6">
+					<Button size="xl" type="button" onClick={handleSubmit}>
+						OK 确认
+					</Button>
+					<Button
+						size="xl"
+						variant="ghost-outline"
+						type="button"
+						onClick={() => navigate("/newform")}
+					>
+						返回
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
