@@ -23,6 +23,24 @@ dist-ssr
 *.sln
 *.sw?
 
+# Added by code-review-graph
+.code-review-graph/
+
 # Tooling caches (Claude Code / Playwright MCP)
-.claude/
 .playwright-mcp/
+
+# AI assistant configs
+.claude/
+.codegraph/
+.cursorrules
+.gemini/
+.kiro/
+.mcp.json
+.opencode.json
+.qoder/
+.windsurfrules
+.github/code-review-graph.instruction.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+QODER.md
