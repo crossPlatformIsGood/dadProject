@@ -62,7 +62,7 @@ type RangeState = { first: string; last: string; value: string };
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
 const inputClass =
-	"bg-paper border border-rule rounded-sm px-3 py-2 w-[120px] font-serif tabular-nums text-center text-base focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+	"bg-surface border border-rule rounded-sm px-3 py-2 w-[120px] font-serif tabular-nums text-center text-base focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 const CopyPage = () => {
 	const navigate = useNavigate();
@@ -162,7 +162,7 @@ const CopyPage = () => {
 		<div className="max-w-2xl mx-auto px-4 py-6">
 			<PageTitle summary={false} />
 
-			<div className="border-2 border-double border-seal rounded-sm bg-paper shadow-sm">
+			<div className="border-2 border-double border-seal rounded-sm bg-surface shadow-md">
 				<div className="border-b border-rule-soft px-6 py-3 text-center font-serif text-sm tracking-[0.3em] text-seal uppercase">
 					【 复制数据 / Copy Range 】
 				</div>

@@ -88,10 +88,10 @@ const NewFormPage = () => {
 	};
 
 	const inputClass =
-		"bg-paper border border-rule rounded-sm px-2 py-1 w-full font-serif tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-sm px-2 py-1 w-full font-serif tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	const metaInputClass =
-		"bg-paper border border-rule rounded-sm px-3 py-1.5 font-serif focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-sm px-3 py-1.5 font-serif focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-6">

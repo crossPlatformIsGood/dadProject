@@ -21,7 +21,7 @@ import { clearPrintData, saveFormConfig } from "@/lib/storage";
 import formSchema, { type FormConfig } from "@/schemas/FormSchema";
 
 const inputClass =
-	"bg-paper border border-rule rounded-sm focus-visible:ring-seal focus-visible:border-seal";
+	"bg-surface border border-rule rounded-sm focus-visible:ring-seal focus-visible:border-seal";
 
 const HomePage = () => {
 	const navigate = useNavigate();
@@ -58,7 +58,7 @@ const HomePage = () => {
 					<div className="mt-3 mx-auto h-px w-32 bg-seal" />
 				</header>
 
-				<section className="bg-paper-strong/40 border-2 border-double border-seal rounded-sm shadow-sm max-w-lg w-full mx-auto">
+				<section className="bg-surface border-2 border-double border-seal rounded-sm shadow-md max-w-lg w-full mx-auto">
 					<div className="border-b border-rule-soft px-6 py-3 text-center font-serif text-sm tracking-[0.3em] text-seal uppercase">
 						【 输入数据 / Input 】
 					</div>
@@ -155,7 +155,7 @@ const HomePage = () => {
 							name="showPileNo"
 							render={({ field }) => (
 								<FormItem>
-									<label className="flex items-center justify-between gap-3 rounded-sm bg-paper border border-rule px-4 py-2.5 cursor-pointer hover:border-seal/60 transition-colors">
+									<label className="flex items-center justify-between gap-3 rounded-sm bg-paper-strong/50 border border-rule px-4 py-2.5 cursor-pointer hover:border-seal/60 transition-colors">
 										<span className="font-serif text-sm tracking-wider text-ink/80">
 											开启 PILE NO
 										</span>
@@ -170,7 +170,7 @@ const HomePage = () => {
 												}`}
 											>
 												<span
-													className={`inline-block h-5 w-5 transform rounded-full bg-paper shadow transition-transform ${
+													className={`inline-block h-5 w-5 transform rounded-full bg-surface shadow transition-transform ${
 														field.value ? "translate-x-5" : "translate-x-0.5"
 													}`}
 												/>

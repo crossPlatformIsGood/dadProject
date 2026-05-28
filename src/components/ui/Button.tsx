@@ -19,8 +19,8 @@ const buttonVariants = cva(
 					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				"ghost-outline":
-					"border border-rule text-ink bg-paper hover:bg-paper-strong active:translate-y-px focus-visible:ring-rule",
-				seal: "bg-paper text-seal border-2 border-seal shadow-sm hover:bg-seal hover:text-paper active:translate-y-px",
+					"border border-rule text-ink bg-surface hover:bg-paper-strong active:translate-y-px focus-visible:ring-rule",
+				seal: "bg-surface text-seal border-2 border-seal shadow-sm hover:bg-seal hover:text-surface active:translate-y-px",
 				link: "text-primary underline-offset-4 hover:underline",
 			},
 			size: {

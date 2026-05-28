@@ -26,13 +26,16 @@
 	--radius-lg: var(--radius);
 
 	/* Classic tea-brown (茶色) vintage palette */
-	--color-paper: #f5ecd9;
-	--color-paper-strong: #ede0c4;
+	--color-paper: #f5ecd9; /* body bg (cream / aged paper) */
+	--color-paper-strong: #ede0c4; /* subtle band, table stripe */
+	--color-surface: #fdfaf3; /* near-white card/input bg, lifts off paper */
+	--color-surface-soft: #f9f3e4;
 	--color-ink: #3a2a1c;
 	--color-seal: #6b4226;
 	--color-seal-hover: #4a2d18;
 	--color-seal-soft: #8a5a38;
 	--color-rule: #c4a878;
+	--color-rule-strong: #a98558; /* darker rule for active borders */
 	--color-rule-soft: #ddc8a0;
 	--color-gold: #b8862a;
 	--color-gold-soft: #d4a44a;
