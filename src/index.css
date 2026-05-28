@@ -24,6 +24,22 @@
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
+
+	/* Classic letterhead palette */
+	--color-paper: #faf6ef;
+	--color-paper-strong: #f4ecdb;
+	--color-ink: #1a1a1a;
+	--color-seal: #8b1a1a;
+	--color-seal-hover: #6b1313;
+	--color-seal-soft: #b94747;
+	--color-rule: #c8b89a;
+	--color-rule-soft: #e6ddc7;
+
+	/* Serif stacks */
+	--font-serif-cn:
+		"Noto Serif SC", "Songti SC", "STSong", "Source Han Serif SC", Georgia,
+		"Times New Roman", serif;
+	--font-serif: Georgia, "Times New Roman", "Noto Serif SC", serif;
 }
 
 :root {
@@ -63,6 +79,14 @@ body {
 	margin: 0;
 	min-width: 320px;
 	min-height: 100vh;
+	background-color: var(--color-paper);
+	color: var(--color-ink);
+}
+
+@media print {
+	body {
+		background-color: #ffffff;
+	}
 }
 
 * {

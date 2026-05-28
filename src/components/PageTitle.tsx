@@ -6,31 +6,36 @@ interface PageTitleProps {
 
 const PageTitle: React.FC<PageTitleProps> = ({ summary = true }) => {
 	return (
-		<div className="border-b border-gray-200 pb-3 mb-4">
-			<div className="text-xl font-bold text-gray-800">富財貿易打樁工程</div>
-			<div className="text-lg font-bold text-gray-700">
-				FOOK CHOY TRADING & PILING ENGINEERING
-			</div>
-			<div className="text-xs mt-1 text-gray-500">
-				474, Jalan Nuri Indah 9, Taman Thivy Jaya, 70100 Seremban, N.S.D.K
-			</div>
-			<div className="text-xs text-gray-500">(Co.No. 000805830-K)</div>
-			<div className="text-xs flex space-x-5 justify-center items-center text-gray-500">
-				<div>
-					<span className="font-bold">Tel: </span>
-					<span>012-6367702</span>
+		<header className="mb-6">
+			<div className="border-b-4 border-double border-seal pb-3 text-center">
+				<div className="font-[var(--font-serif-cn)] text-3xl tracking-[0.35em] text-seal">
+					富財貿易打樁工程
 				</div>
-				<div>
-					<span className="font-bold">Email: </span>
-					<span>fookchoy327@yahoo.com.my</span>
+				<div className="mt-1 font-serif text-base tracking-[0.18em] text-ink uppercase">
+					Fook Choy Trading &amp; Piling Engineering
+				</div>
+				<div className="mt-2 text-[11px] font-serif text-ink/70 leading-relaxed">
+					474, Jalan Nuri Indah 9, Taman Thivy Jaya, 70100 Seremban, N.S.D.K
+					&nbsp;·&nbsp; Co.No. 000805830-K
+				</div>
+				<div className="text-[11px] font-serif text-ink/70 flex justify-center gap-6 mt-0.5">
+					<span>
+						<span className="font-semibold">Tel</span>&nbsp;012-6367702
+					</span>
+					<span>
+						<span className="font-semibold">Email</span>
+						&nbsp;fookchoy327@yahoo.com.my
+					</span>
 				</div>
 			</div>
 			{summary && (
-				<div className="text-base font-bold mt-2 text-gray-800">
-					PILING RECORD SUMMARY
+				<div className="mt-3 text-center">
+					<span className="inline-block px-4 py-1 font-serif text-base tracking-[0.3em] text-seal">
+						【 PILING RECORD SUMMARY 】
+					</span>
 				</div>
 			)}
-		</div>
+		</header>
 	);
 };
 

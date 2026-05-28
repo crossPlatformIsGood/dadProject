@@ -62,7 +62,7 @@ type RangeState = { first: string; last: string; value: string };
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
 const inputClass =
-	"bg-white border border-gray-300 rounded-md px-2 py-1.5 w-[110px] tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-colors";
+	"bg-paper border border-rule rounded-sm px-3 py-2 w-[120px] font-serif tabular-nums text-center text-base focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 const CopyPage = () => {
 	const navigate = useNavigate();
@@ -75,8 +75,8 @@ const CopyPage = () => {
 	);
 	const [errors, setErrors] = useState<Record<string, string | null>>({});
 
-	if (!formConfig) return <>没有该数据</>;
-	if (!printData) return <>没有该数据</>;
+	if (!formConfig) return <FallbackMessage />;
+	if (!printData) return <FallbackMessage />;
 
 	const maxNum = formConfig.maxNum;
 
@@ -159,91 +159,116 @@ const CopyPage = () => {
 	};
 
 	return (
-		<div>
+		<div className="max-w-2xl mx-auto px-4 py-6">
 			<PageTitle summary={false} />
-			<div className="max-w-xl mx-auto">
-				<div className="rounded-lg border border-gray-200 bg-white shadow-sm p-6 space-y-5">
-					{RANGES.map((cfg, index) => {
+
+			<div className="border-2 border-double border-seal rounded-sm bg-paper shadow-sm">
+				<div className="border-b border-rule-soft px-6 py-3 text-center font-serif text-sm tracking-[0.3em] text-seal uppercase">
+					【 复制数据 / Copy Range 】
+				</div>
+
+				<div className="divide-y divide-rule-soft">
+					{RANGES.map((cfg) => {
 						const isDecimal = cfg.key === "pen";
 						const state = ranges[cfg.key];
 						const error = errors[cfg.key];
+						const errorId = `error-${cfg.key}`;
 						const onValue = (v: string) =>
 							isDecimal
 								? handleDecimalChange(v, cfg.key, "value")
 								: handleIntegerChange(v, cfg.key, "value");
 
 						return (
-							<div
-								key={cfg.key}
-								className={
-									index > 0 ? "pt-5 border-t border-gray-100" : undefined
-								}
-							>
-								<div className="flex items-center gap-3">
-									<span className="font-medium text-sm text-gray-700 w-[110px] text-right shrink-0">
+							<section key={cfg.key} className="px-6 py-5">
+								<div className="flex items-baseline justify-between mb-3">
+									<h3 className="font-serif text-base font-semibold tracking-[0.2em] text-seal uppercase">
 										{cfg.label}
+									</h3>
+									<span className="font-serif text-xs tracking-widest text-ink/60 uppercase">
+										Range
 									</span>
-									<input
-										type="number"
-										aria-label={`${cfg.label} first pile`}
-										aria-invalid={!!error}
-										className={inputClass}
-										value={state.first}
-										onChange={(e) =>
-											handleIntegerChange(e.target.value, cfg.key, "first")
-										}
-									/>
-									<span className="text-gray-400">—</span>
-									<input
-										type="number"
-										aria-label={`${cfg.label} last pile`}
-										aria-invalid={!!error}
-										className={inputClass}
-										value={state.last}
-										onChange={(e) =>
-											handleIntegerChange(e.target.value, cfg.key, "last")
-										}
-									/>
-									<span className="text-sm text-gray-600">支数=</span>
-									<input
-										type="number"
-										aria-label={`${cfg.label} value`}
-										aria-invalid={!!error}
-										className={inputClass}
-										value={state.value}
-										onChange={(e) => onValue(e.target.value)}
-									/>
 								</div>
+
+								<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+									<div className="flex items-center gap-2">
+										<input
+											type="number"
+											aria-label={`${cfg.label} first pile`}
+											aria-invalid={!!error}
+											aria-describedby={error ? errorId : undefined}
+											className={inputClass}
+											value={state.first}
+											onChange={(e) =>
+												handleIntegerChange(e.target.value, cfg.key, "first")
+											}
+										/>
+										<span className="text-rule font-serif text-xl">—</span>
+										<input
+											type="number"
+											aria-label={`${cfg.label} last pile`}
+											aria-invalid={!!error}
+											aria-describedby={error ? errorId : undefined}
+											className={inputClass}
+											value={state.last}
+											onChange={(e) =>
+												handleIntegerChange(e.target.value, cfg.key, "last")
+											}
+										/>
+									</div>
+
+									<div className="flex items-center gap-3 ml-auto">
+										<span className="font-serif text-sm tracking-wider text-ink/80">
+											支数
+										</span>
+										<input
+											type="number"
+											aria-label={`${cfg.label} value`}
+											aria-invalid={!!error}
+											aria-describedby={error ? errorId : undefined}
+											className={inputClass}
+											value={state.value}
+											onChange={(e) => onValue(e.target.value)}
+										/>
+									</div>
+								</div>
+
 								{error && (
 									<p
+										id={errorId}
 										role="alert"
-										data-testid={`error-${cfg.key}`}
-										className="mt-2 ml-[122px] text-sm font-medium text-red-600"
+										data-testid={errorId}
+										className="mt-3 font-serif text-sm font-medium text-seal"
 									>
 										⚠ {error}
 									</p>
 								)}
-							</div>
+							</section>
 						);
 					})}
 				</div>
+			</div>
 
-				<div className="flex justify-center gap-3 pt-6">
-					<Button size="xl" type="button" onClick={handleSubmit}>
-						OK 确认
-					</Button>
-					<Button
-						size="xl"
-						variant="ghost-outline"
-						type="button"
-						onClick={() => navigate("/newform")}
-					>
-						返回
-					</Button>
-				</div>
+			<div className="flex justify-center gap-4 pt-8">
+				<Button size="xl" type="button" onClick={handleSubmit}>
+					【 OK 确认 】
+				</Button>
+				<Button
+					size="xl"
+					variant="ghost-outline"
+					type="button"
+					onClick={() => navigate("/newform")}
+				>
+					返回
+				</Button>
 			</div>
 		</div>
 	);
 };
+
+const FallbackMessage = () => (
+	<div className="min-h-[60vh] flex items-center justify-center font-serif text-ink/70 text-lg">
+		没有该数据
+	</div>
+);
 
 export default CopyPage;
