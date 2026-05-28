@@ -20,6 +20,9 @@ import {
 import { clearPrintData, saveFormConfig } from "@/lib/storage";
 import formSchema, { type FormConfig } from "@/schemas/FormSchema";
 
+const inputClass =
+	"bg-surface border border-rule rounded-xl h-11 focus-visible:ring-2 focus-visible:ring-seal focus-visible:ring-offset-0 focus-visible:border-seal";
+
 const HomePage = () => {
 	const navigate = useNavigate();
 
@@ -43,33 +46,31 @@ const HomePage = () => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col items-center justify-center space-y-6 min-h-[calc(100vh-4rem)]"
+				className="flex flex-col items-center justify-center space-y-8 min-h-[calc(100vh-4rem)] px-4 py-10"
 			>
-				<div>
-					<div className="font-bold text-3xl text-gray-800">
-						富財貿易打樁工程
-					</div>
-					<div className="font-bold text-2xl text-gray-700 mt-1">
-						FOOK CHOY TRADING & PILING ENGINEERING
-					</div>
-				</div>
+				<header className="text-center">
+					<h1 className="text-3xl font-semibold text-ink">富財貿易打樁工程</h1>
+					<p className="mt-2 text-sm font-medium text-ink-soft tracking-wide">
+						Fook Choy Trading &amp; Piling Engineering
+					</p>
+				</header>
 
-				<div className="bg-blue-50 border border-blue-200 space-y-5 p-8 rounded-lg max-w-lg mx-auto">
-					<div className="text-sm font-medium text-gray-600">
-						输入需要的行数
-					</div>
-					<div className="flex justify-center gap-x-4 items-center">
-						<FormField
-							control={form.control}
-							name="minNum"
-							render={({ field }) => {
-								return (
-									<FormItem className="w-[180px]">
+				<section className="bg-surface border border-rule rounded-2xl shadow-sm max-w-md w-full mx-auto p-7 space-y-6">
+					<div>
+						<div className="block text-sm font-medium text-ink-soft mb-2">
+							号码范围
+						</div>
+						<div className="flex items-center gap-3">
+							<FormField
+								control={form.control}
+								name="minNum"
+								render={({ field }) => (
+									<FormItem className="flex-1">
 										<FormControl>
 											<Input
-												className="bg-white rounded-md"
+												className={inputClass}
 												type="number"
-												placeholder="第一个号码"
+												placeholder="起始"
 												{...field}
 												onChange={(e) => {
 													const val = e.target.value;
@@ -79,21 +80,19 @@ const HomePage = () => {
 										</FormControl>
 										<FormMessage />
 									</FormItem>
-								);
-							}}
-						/>
-						<div className="text-gray-400 font-bold">—</div>
-						<FormField
-							control={form.control}
-							name="maxNum"
-							render={({ field }) => {
-								return (
-									<FormItem className="w-[180px]">
+								)}
+							/>
+							<span className="text-ink-soft">—</span>
+							<FormField
+								control={form.control}
+								name="maxNum"
+								render={({ field }) => (
+									<FormItem className="flex-1">
 										<FormControl>
 											<Input
-												className="bg-white rounded-md"
+												className={inputClass}
 												type="number"
-												placeholder="最后的号码"
+												placeholder="结束"
 												{...field}
 												onChange={(e) => {
 													const val = e.target.value;
@@ -103,35 +102,37 @@ const HomePage = () => {
 										</FormControl>
 										<FormMessage />
 									</FormItem>
-								);
-							}}
-						/>
+								)}
+							/>
+						</div>
 					</div>
-					<div className="w-[140px] mx-auto">
+
+					<div>
+						<div className="block text-sm font-medium text-ink-soft mb-2">
+							单位
+						</div>
 						<FormField
 							control={form.control}
 							name="role"
-							render={({ field }) => {
-								return (
-									<FormItem>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger className="bg-white rounded-md">
-													<SelectValue placeholder="选择单位" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												<SelectItem value="meter">Meter</SelectItem>
-												<SelectItem value="foot">Foot</SelectItem>
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								);
-							}}
+							render={({ field }) => (
+								<FormItem>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger className={inputClass}>
+												<SelectValue placeholder="选择单位" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											<SelectItem value="meter">Meter</SelectItem>
+											<SelectItem value="foot">Foot</SelectItem>
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
 					</div>
 
@@ -140,8 +141,8 @@ const HomePage = () => {
 						name="showPileNo"
 						render={({ field }) => (
 							<FormItem>
-								<label className="flex items-center justify-between gap-3 rounded-md bg-white border border-blue-200 px-4 py-2.5 cursor-pointer hover:border-blue-300 transition-colors">
-									<span className="text-sm font-medium text-gray-700">
+								<label className="flex items-center justify-between gap-3 cursor-pointer">
+									<span className="text-sm font-medium text-ink">
 										开启 PILE NO
 									</span>
 									<FormControl>
@@ -150,8 +151,8 @@ const HomePage = () => {
 											role="switch"
 											aria-checked={!!field.value}
 											onClick={() => field.onChange(!field.value)}
-											className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 ${
-												field.value ? "bg-blue-500" : "bg-gray-300"
+											className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-seal/40 ${
+												field.value ? "bg-seal" : "bg-rule"
 											}`}
 										>
 											<span
@@ -167,10 +168,10 @@ const HomePage = () => {
 						)}
 					/>
 
-					<Button type="submit" size="lg" className="w-full">
-						提交
+					<Button type="submit" size="xl" className="w-full">
+						继续
 					</Button>
-				</div>
+				</section>
 			</form>
 		</Form>
 	);

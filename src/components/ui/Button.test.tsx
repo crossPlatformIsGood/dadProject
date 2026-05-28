@@ -9,17 +9,25 @@ describe("Button", () => {
 		expect(btn.tagName).toBe("BUTTON");
 	});
 
-	it("applies the default amber variant when no variant set", () => {
+	it("applies the default primary variant when no variant set", () => {
 		render(<Button>OK</Button>);
 		const btn = screen.getByRole("button", { name: "OK" });
-		expect(btn.className).toMatch(/bg-amber-400/);
+		expect(btn.className).toMatch(/bg-seal/);
+		expect(btn.className).toMatch(/text-white/);
 	});
 
 	it("applies the ghost-outline variant", () => {
 		render(<Button variant="ghost-outline">Cancel</Button>);
 		const btn = screen.getByRole("button", { name: "Cancel" });
-		expect(btn.className).toMatch(/border-gray-300/);
-		expect(btn.className).not.toMatch(/bg-amber-400/);
+		expect(btn.className).toMatch(/border-rule/);
+		expect(btn.className).not.toMatch(/bg-seal\b/);
+	});
+
+	it("applies the seal outline variant", () => {
+		render(<Button variant="seal">Stamp</Button>);
+		const btn = screen.getByRole("button", { name: "Stamp" });
+		expect(btn.className).toMatch(/border-seal/);
+		expect(btn.className).toMatch(/text-seal/);
 	});
 
 	it("applies the xl size", () => {
@@ -33,7 +41,7 @@ describe("Button", () => {
 		render(<Button className="custom-x">Hi</Button>);
 		const btn = screen.getByRole("button", { name: "Hi" });
 		expect(btn.className).toMatch(/custom-x/);
-		expect(btn.className).toMatch(/bg-amber-400/);
+		expect(btn.className).toMatch(/bg-seal/);
 	});
 
 	it("renders as the child element when asChild is true", () => {
@@ -44,14 +52,14 @@ describe("Button", () => {
 		);
 		const link = screen.getByRole("link", { name: "Link" });
 		expect(link.tagName).toBe("A");
-		expect(link.className).toMatch(/bg-amber-400/);
+		expect(link.className).toMatch(/bg-seal/);
 	});
 
 	it("respects disabled prop", () => {
 		render(<Button disabled>Off</Button>);
 		const btn = screen.getByRole("button", { name: "Off" });
 		expect(btn).toBeDisabled();
-		expect(btn.className).toMatch(/disabled:cursor-not-allowed/);
+		expect(btn.className).toMatch(/disabled:pointer-events-none/);
 	});
 
 	it("forwards ref to the underlying element", () => {
@@ -66,5 +74,11 @@ describe("Button", () => {
 			</Button>,
 		);
 		expect(refHolder.current).toBeInstanceOf(HTMLButtonElement);
+	});
+
+	it("uses a pill (rounded-full) shape", () => {
+		render(<Button>Hi</Button>);
+		const btn = screen.getByRole("button", { name: "Hi" });
+		expect(btn.className).toMatch(/rounded-full/);
 	});
 });

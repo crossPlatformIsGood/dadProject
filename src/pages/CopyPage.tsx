@@ -62,7 +62,7 @@ type RangeState = { first: string; last: string; value: string };
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
 const inputClass =
-	"bg-white border border-gray-300 rounded-md px-2 py-1.5 w-[110px] tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-colors";
+	"bg-paper border border-transparent rounded-lg h-9 px-2 w-[72px] text-base tabular-nums text-center focus:outline-none focus:bg-surface focus:border-seal focus:ring-2 focus:ring-seal/30 transition-colors";
 
 const CopyPage = () => {
 	const navigate = useNavigate();
@@ -75,8 +75,8 @@ const CopyPage = () => {
 	);
 	const [errors, setErrors] = useState<Record<string, string | null>>({});
 
-	if (!formConfig) return <>没有该数据</>;
-	if (!printData) return <>没有该数据</>;
+	if (!formConfig) return <FallbackMessage />;
+	if (!printData) return <FallbackMessage />;
 
 	const maxNum = formConfig.maxNum;
 
@@ -159,91 +159,106 @@ const CopyPage = () => {
 	};
 
 	return (
-		<div>
+		<div className="max-w-xl mx-auto px-4 py-10">
 			<PageTitle summary={false} />
-			<div className="max-w-xl mx-auto">
-				<div className="rounded-lg border border-gray-200 bg-white shadow-sm p-6 space-y-5">
-					{RANGES.map((cfg, index) => {
-						const isDecimal = cfg.key === "pen";
-						const state = ranges[cfg.key];
-						const error = errors[cfg.key];
-						const onValue = (v: string) =>
-							isDecimal
-								? handleDecimalChange(v, cfg.key, "value")
-								: handleIntegerChange(v, cfg.key, "value");
 
-						return (
-							<div
-								key={cfg.key}
-								className={
-									index > 0 ? "pt-5 border-t border-gray-100" : undefined
-								}
-							>
-								<div className="flex items-center gap-3">
-									<span className="font-medium text-sm text-gray-700 w-[110px] text-right shrink-0">
-										{cfg.label}
-									</span>
+			<div className="bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
+				{RANGES.map((cfg, index) => {
+					const isDecimal = cfg.key === "pen";
+					const state = ranges[cfg.key];
+					const error = errors[cfg.key];
+					const errorId = `error-${cfg.key}`;
+					const onValue = (v: string) =>
+						isDecimal
+							? handleDecimalChange(v, cfg.key, "value")
+							: handleIntegerChange(v, cfg.key, "value");
+
+					return (
+						<section
+							key={cfg.key}
+							className={index > 0 ? "border-t border-rule-soft" : undefined}
+						>
+							<div className="flex items-center gap-3 px-5 py-3 min-h-[56px]">
+								<span className="text-base font-medium text-ink flex-1 truncate">
+									{cfg.label}
+								</span>
+
+								<div className="flex items-center gap-1.5">
 									<input
 										type="number"
 										aria-label={`${cfg.label} first pile`}
 										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
 										className={inputClass}
 										value={state.first}
 										onChange={(e) =>
 											handleIntegerChange(e.target.value, cfg.key, "first")
 										}
 									/>
-									<span className="text-gray-400">—</span>
+									<span className="text-ink-soft text-sm">—</span>
 									<input
 										type="number"
 										aria-label={`${cfg.label} last pile`}
 										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
 										className={inputClass}
 										value={state.last}
 										onChange={(e) =>
 											handleIntegerChange(e.target.value, cfg.key, "last")
 										}
 									/>
-									<span className="text-sm text-gray-600">支数=</span>
+								</div>
+
+								<div className="flex items-center gap-2 ml-3">
+									<span className="text-sm text-ink-soft">支数</span>
 									<input
 										type="number"
 										aria-label={`${cfg.label} value`}
 										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
 										className={inputClass}
 										value={state.value}
 										onChange={(e) => onValue(e.target.value)}
 									/>
 								</div>
-								{error && (
-									<p
-										role="alert"
-										data-testid={`error-${cfg.key}`}
-										className="mt-2 ml-[122px] text-sm font-medium text-red-600"
-									>
-										⚠ {error}
-									</p>
-								)}
 							</div>
-						);
-					})}
-				</div>
 
-				<div className="flex justify-center gap-3 pt-6">
-					<Button size="xl" type="button" onClick={handleSubmit}>
-						OK 确认
-					</Button>
-					<Button
-						size="xl"
-						variant="ghost-outline"
-						type="button"
-						onClick={() => navigate("/newform")}
-					>
-						返回
-					</Button>
-				</div>
+							{error && (
+								<p
+									id={errorId}
+									role="alert"
+									data-testid={errorId}
+									className="px-5 pb-3 -mt-1 text-sm text-red-500"
+								>
+									{error}
+								</p>
+							)}
+						</section>
+					);
+				})}
+			</div>
+
+			<div className="flex justify-center gap-3 pt-8">
+				<Button size="xl" type="button" onClick={handleSubmit}>
+					确认
+				</Button>
+				<Button
+					size="xl"
+					variant="ghost-outline"
+					type="button"
+					onClick={() => navigate("/newform")}
+				>
+					返回
+				</Button>
 			</div>
 		</div>
 	);
 };
+
+const FallbackMessage = () => (
+	<div className="min-h-[60vh] flex items-center justify-center text-ink-soft text-base">
+		没有该数据
+	</div>
+);
 
 export default CopyPage;

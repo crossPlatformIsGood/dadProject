@@ -24,6 +24,27 @@
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
+
+	/* Apple-style monochrome minimal palette */
+	--color-paper: #f5f5f7; /* body bg */
+	--color-paper-strong: #ebebed; /* subtle band */
+	--color-surface: #ffffff; /* card / input bg */
+	--color-surface-soft: #fafafa;
+	--color-ink: #1d1d1f; /* near-black, primary text + primary action */
+	--color-ink-soft: #6e6e73; /* secondary text */
+	--color-seal: #1d1d1f; /* primary action = ink (intentionally no brand color) */
+	--color-seal-hover: #000000;
+	--color-seal-soft: #424245;
+	--color-rule: #d2d2d7;
+	--color-rule-strong: #86868b;
+	--color-rule-soft: #e8e8ed;
+	--color-gold: #1d1d1f; /* legacy alias */
+	--color-gold-soft: #424245;
+
+	/* Font stacks */
+	--font-system:
+		-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto,
+		"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 
 :root {
@@ -48,11 +69,11 @@
 	--ring: 222.2 84% 4.9%;
 	--radius: 0.5rem;
 
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	font-family: var(--font-system);
 	line-height: 1.5;
 	font-weight: 400;
-	color: hsl(var(--foreground));
-	background-color: hsl(var(--background));
+	color: var(--color-ink);
+	background-color: var(--color-paper);
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
@@ -63,6 +84,14 @@ body {
 	margin: 0;
 	min-width: 320px;
 	min-height: 100vh;
+	background-color: var(--color-paper);
+	color: var(--color-ink);
+}
+
+@media print {
+	body {
+		background-color: #ffffff;
+	}
 }
 
 * {
