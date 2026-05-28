@@ -62,7 +62,7 @@ type RangeState = { first: string; last: string; value: string };
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
 const inputClass =
-	"bg-surface border border-rule rounded-xl h-11 px-3 w-[110px] tabular-nums text-center focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+	"bg-paper border border-transparent rounded-lg h-9 px-2 w-[72px] text-base tabular-nums text-center focus:outline-none focus:bg-surface focus:border-seal focus:ring-2 focus:ring-seal/30 transition-colors";
 
 const CopyPage = () => {
 	const navigate = useNavigate();
@@ -159,7 +159,7 @@ const CopyPage = () => {
 	};
 
 	return (
-		<div className="max-w-2xl mx-auto px-4 py-6">
+		<div className="max-w-xl mx-auto px-4 py-10">
 			<PageTitle summary={false} />
 
 			<div className="bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
@@ -176,14 +176,14 @@ const CopyPage = () => {
 					return (
 						<section
 							key={cfg.key}
-							className={`px-6 py-5 ${index > 0 ? "border-t border-rule-soft" : ""}`}
+							className={index > 0 ? "border-t border-rule-soft" : undefined}
 						>
-							<h3 className="text-sm font-semibold text-ink-soft tracking-wide mb-3">
-								{cfg.label}
-							</h3>
+							<div className="flex items-center gap-3 px-5 py-3 min-h-[56px]">
+								<span className="text-base font-medium text-ink flex-1 truncate">
+									{cfg.label}
+								</span>
 
-							<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-								<div className="flex items-center gap-2">
+								<div className="flex items-center gap-1.5">
 									<input
 										type="number"
 										aria-label={`${cfg.label} first pile`}
@@ -195,7 +195,7 @@ const CopyPage = () => {
 											handleIntegerChange(e.target.value, cfg.key, "first")
 										}
 									/>
-									<span className="text-ink-soft">—</span>
+									<span className="text-ink-soft text-sm">—</span>
 									<input
 										type="number"
 										aria-label={`${cfg.label} last pile`}
@@ -209,7 +209,7 @@ const CopyPage = () => {
 									/>
 								</div>
 
-								<div className="flex items-center gap-3 ml-auto">
+								<div className="flex items-center gap-2 ml-3">
 									<span className="text-sm text-ink-soft">支数</span>
 									<input
 										type="number"
@@ -228,7 +228,7 @@ const CopyPage = () => {
 									id={errorId}
 									role="alert"
 									data-testid={errorId}
-									className="mt-3 text-sm text-red-500"
+									className="px-5 pb-3 -mt-1 text-sm text-red-500"
 								>
 									{error}
 								</p>
