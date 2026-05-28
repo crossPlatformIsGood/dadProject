@@ -88,10 +88,10 @@ const NewFormPage = () => {
 	};
 
 	const inputClass =
-		"bg-surface border border-rule rounded-sm px-2 py-1 w-full font-serif tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-lg px-2 py-1.5 w-full tabular-nums focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	const metaInputClass =
-		"bg-surface border border-rule rounded-sm px-3 py-1.5 font-serif focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+		"bg-surface border border-rule rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-6">
@@ -99,24 +99,32 @@ const NewFormPage = () => {
 				<PageTitle />
 				<div className="max-w-2xl mx-auto">
 					<div className="flex items-center justify-end gap-3 mb-3">
-						<span className="font-serif text-sm font-semibold tracking-wider text-seal shrink-0">
-							DATE
-						</span>
+						<label
+							htmlFor="meta-date"
+							className="text-sm font-medium text-ink-soft shrink-0"
+						>
+							日期
+						</label>
 						<input
+							id="meta-date"
 							type="text"
 							maxLength={10}
 							placeholder="DD/MM/YYYY"
-							className={`${metaInputClass} w-[150px]`}
+							className={`${metaInputClass} w-[160px]`}
 							value={date}
 							onChange={(e) => setDate(e.target.value)}
 						/>
 					</div>
 					<div className="space-y-3">
 						<div className="flex items-center gap-3">
-							<span className="font-serif text-sm font-semibold tracking-wider text-seal w-[120px] text-right shrink-0">
-								PROJECT
-							</span>
+							<label
+								htmlFor="meta-project"
+								className="text-sm font-medium text-ink-soft w-[120px] text-right shrink-0"
+							>
+								Project
+							</label>
 							<input
+								id="meta-project"
 								type="text"
 								maxLength={100}
 								name="p1"
@@ -130,16 +138,21 @@ const NewFormPage = () => {
 							<input
 								type="text"
 								maxLength={100}
+								aria-label="Project (line 2)"
 								className={`${metaInputClass} flex-1`}
 								value={project2}
 								onChange={(e) => setProject2(e.target.value)}
 							/>
 						</div>
 						<div className="flex items-center gap-3">
-							<span className="font-serif text-sm font-semibold tracking-wider text-seal w-[120px] text-right shrink-0">
-								SIZE OF PILE
-							</span>
+							<label
+								htmlFor="meta-pile"
+								className="text-sm font-medium text-ink-soft w-[120px] text-right shrink-0"
+							>
+								Size of pile
+							</label>
 							<input
+								id="meta-pile"
 								type="text"
 								maxLength={100}
 								className={`${metaInputClass} flex-1`}
@@ -150,133 +163,140 @@ const NewFormPage = () => {
 					</div>
 				</div>
 
-				<table className="border-collapse mx-auto mt-5 font-serif">
-					<thead>
-						<tr className="bg-paper-strong border-y-2 border-double border-seal">
-							<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-								NO.
-							</th>
-							{showPileNo && (
-								<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-									PILE NO
+				<div className="mt-6 bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
+					<table className="border-collapse mx-auto w-full">
+						<thead>
+							<tr className="bg-paper-strong">
+								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									NO.
 								</th>
-							)}
-							<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-								PILE LENGTHS 6 METER
-							</th>
-							<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-								PILE LENGTHS 3 METER
-							</th>
-							<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-								JOINTS NO
-							</th>
-							<th className="text-xs font-semibold tracking-wider text-seal uppercase px-2">
-								{formConfig.role}
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{values.map((row, rowIndex) => (
-							<tr
-								key={`row-${formConfig.minNum + rowIndex}`}
-								className="even:bg-paper-strong/30"
-							>
-								<td className="text-sm text-center font-semibold text-ink px-2 tabular-nums">
-									{formConfig.minNum + rowIndex}
-								</td>
 								{showPileNo && (
+									<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+										PILE NO
+									</th>
+								)}
+								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									PILE LENGTHS 6 METER
+								</th>
+								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									PILE LENGTHS 3 METER
+								</th>
+								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									JOINTS NO
+								</th>
+								<th className="text-xs font-semibold text-ink uppercase tracking-wide px-3 py-3">
+									{formConfig.role}
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{values.map((row, rowIndex) => (
+								<tr
+									key={`row-${formConfig.minNum + rowIndex}`}
+									className="border-t border-rule-soft"
+								>
+									<td className="text-sm text-center font-medium text-ink-soft px-2 tabular-nums">
+										{formConfig.minNum + rowIndex}
+									</td>
+									{showPileNo && (
+										<td>
+											<input
+												type="number"
+												autoComplete="off"
+												aria-label={`Row ${rowIndex + 1} pile number`}
+												className={inputClass}
+												value={row[ROW_COL.PILE_NO]}
+												onChange={(e) =>
+													handleIntegerChange(
+														e.target.value,
+														rowIndex,
+														ROW_COL.PILE_NO,
+													)
+												}
+											/>
+										</td>
+									)}
 									<td>
 										<input
 											type="number"
 											autoComplete="off"
-											aria-label={`Row ${rowIndex + 1} pile number`}
+											aria-label={`Row ${rowIndex + 1} 6-meter count`}
 											className={inputClass}
-											value={row[ROW_COL.PILE_NO]}
+											value={row[ROW_COL.SIX_M]}
 											onChange={(e) =>
 												handleIntegerChange(
 													e.target.value,
 													rowIndex,
-													ROW_COL.PILE_NO,
+													ROW_COL.SIX_M,
 												)
 											}
 										/>
 									</td>
-								)}
-								<td>
-									<input
-										type="number"
-										autoComplete="off"
-										aria-label={`Row ${rowIndex + 1} 6-meter count`}
-										className={inputClass}
-										value={row[ROW_COL.SIX_M]}
-										onChange={(e) =>
-											handleIntegerChange(
-												e.target.value,
-												rowIndex,
-												ROW_COL.SIX_M,
-											)
-										}
-									/>
-								</td>
-								<td>
-									<input
-										type="number"
-										autoComplete="off"
-										aria-label={`Row ${rowIndex + 1} 3-meter count`}
-										className={inputClass}
-										value={row[ROW_COL.THREE_M]}
-										onChange={(e) =>
-											handleIntegerChange(
-												e.target.value,
-												rowIndex,
-												ROW_COL.THREE_M,
-											)
-										}
-									/>
-								</td>
-								<td>
-									<input
-										type="number"
-										autoComplete="off"
-										aria-label={`Row ${rowIndex + 1} joints count`}
-										className={inputClass}
-										value={row[ROW_COL.JOINTS]}
-										onChange={(e) =>
-											handleIntegerChange(
-												e.target.value,
-												rowIndex,
-												ROW_COL.JOINTS,
-											)
-										}
-									/>
-								</td>
-								<td>
-									<input
-										type="number"
-										autoComplete="off"
-										aria-label={`Row ${rowIndex + 1} penetration`}
-										pattern="^\d+(?:\.\d{1,2})?$"
-										className={inputClass}
-										value={row[ROW_COL.PENETRATION]}
-										onChange={(e) =>
-											handleDecimalChange(
-												e.target.value,
-												rowIndex,
-												ROW_COL.PENETRATION,
-											)
-										}
-									/>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+									<td>
+										<input
+											type="number"
+											autoComplete="off"
+											aria-label={`Row ${rowIndex + 1} 3-meter count`}
+											className={inputClass}
+											value={row[ROW_COL.THREE_M]}
+											onChange={(e) =>
+												handleIntegerChange(
+													e.target.value,
+													rowIndex,
+													ROW_COL.THREE_M,
+												)
+											}
+										/>
+									</td>
+									<td>
+										<input
+											type="number"
+											autoComplete="off"
+											aria-label={`Row ${rowIndex + 1} joints count`}
+											className={inputClass}
+											value={row[ROW_COL.JOINTS]}
+											onChange={(e) =>
+												handleIntegerChange(
+													e.target.value,
+													rowIndex,
+													ROW_COL.JOINTS,
+												)
+											}
+										/>
+									</td>
+									<td>
+										<input
+											type="number"
+											autoComplete="off"
+											aria-label={`Row ${rowIndex + 1} penetration`}
+											pattern="^\d+(?:\.\d{1,2})?$"
+											className={inputClass}
+											value={row[ROW_COL.PENETRATION]}
+											onChange={(e) =>
+												handleDecimalChange(
+													e.target.value,
+													rowIndex,
+													ROW_COL.PENETRATION,
+												)
+											}
+										/>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 
-				<div className="flex justify-center gap-4 pt-8">
+				<div className="flex justify-center gap-3 pt-8">
 					<Button size="xl" type="button" onClick={handleSave}>
-						【 保存打印 】
+						保存
 					</Button>
-					<Button size="xl" variant="seal" type="button" onClick={handleCopy}>
+					<Button
+						size="xl"
+						variant="ghost-outline"
+						type="button"
+						onClick={handleCopy}
+					>
 						复制
 					</Button>
 				</div>

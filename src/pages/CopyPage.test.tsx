@@ -59,7 +59,7 @@ describe("CopyPage", () => {
 		seedStorage();
 		renderPage();
 		const user = userEvent.setup();
-		await user.click(screen.getByRole("button", { name: /OK/i }));
+		await user.click(screen.getByRole("button", { name: "确认" }));
 		expect(navigateMock).toHaveBeenCalledWith("/newform");
 	});
 
@@ -75,7 +75,7 @@ describe("CopyPage", () => {
 		await user.type(firstInput, "5");
 		await user.type(lastInput, "3");
 		await user.type(valueInput, "1");
-		await user.click(screen.getByRole("button", { name: /OK/i }));
+		await user.click(screen.getByRole("button", { name: "确认" }));
 
 		expect(screen.getByTestId("error-sixM")).toHaveTextContent(
 			"第二个号码少过5",
@@ -95,7 +95,7 @@ describe("CopyPage", () => {
 		await user.type(firstInput, "5");
 		await user.type(lastInput, "3");
 		await user.type(valueInput, "1");
-		await user.click(screen.getByRole("button", { name: /OK/i }));
+		await user.click(screen.getByRole("button", { name: "确认" }));
 		expect(screen.getByTestId("error-sixM")).toBeInTheDocument();
 
 		await user.clear(lastInput);
@@ -111,7 +111,7 @@ describe("CopyPage", () => {
 		await user.type(screen.getByLabelText("3 METER first pile"), "1");
 		await user.type(screen.getByLabelText("3 METER last pile"), "11");
 		await user.type(screen.getByLabelText("3 METER value"), "5");
-		await user.click(screen.getByRole("button", { name: /OK/i }));
+		await user.click(screen.getByRole("button", { name: "确认" }));
 
 		expect(screen.getByTestId("error-threeM")).toHaveTextContent(
 			"第二个号码不能大于10",

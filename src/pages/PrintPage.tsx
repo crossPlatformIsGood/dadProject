@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./printpage.css";
 import PageTitle from "@/components/PageTitle";
+import { Button } from "@/components/ui/Button";
 import { PRINT_COL } from "@/lib/columns";
 import { loadFormConfig, loadPrintData } from "@/lib/storage";
 
@@ -132,23 +133,24 @@ const PrintPage = () => {
 				</tbody>
 			</table>
 
-			<div className="flex justify-center gap-3 mb-10">
-				<button
+			<div className="flex justify-center gap-3 mb-10 print:hidden">
+				<Button
+					size="xl"
 					type="button"
 					id="p"
 					onClick={() => window.print()}
-					className="bg-amber-400 hover:bg-amber-500 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 				>
-					Print
-				</button>
-				<button
+					打印
+				</Button>
+				<Button
+					size="xl"
+					variant="ghost-outline"
 					type="button"
 					id="e"
 					onClick={() => navigate("/newform")}
-					className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-8 py-2 rounded-md cursor-pointer transition-colors"
 				>
 					修改
-				</button>
+				</Button>
 			</div>
 		</div>
 	);

@@ -9,11 +9,11 @@ describe("Button", () => {
 		expect(btn.tagName).toBe("BUTTON");
 	});
 
-	it("applies the default seal (crimson) variant when no variant set", () => {
+	it("applies the default primary variant when no variant set", () => {
 		render(<Button>OK</Button>);
 		const btn = screen.getByRole("button", { name: "OK" });
 		expect(btn.className).toMatch(/bg-seal/);
-		expect(btn.className).toMatch(/text-paper/);
+		expect(btn.className).toMatch(/text-white/);
 	});
 
 	it("applies the ghost-outline variant", () => {
@@ -23,11 +23,11 @@ describe("Button", () => {
 		expect(btn.className).not.toMatch(/bg-seal\b/);
 	});
 
-	it("applies the seal stamp variant", () => {
+	it("applies the seal outline variant", () => {
 		render(<Button variant="seal">Stamp</Button>);
 		const btn = screen.getByRole("button", { name: "Stamp" });
-		expect(btn.className).toMatch(/border-2/);
 		expect(btn.className).toMatch(/border-seal/);
+		expect(btn.className).toMatch(/text-seal/);
 	});
 
 	it("applies the xl size", () => {
@@ -76,9 +76,9 @@ describe("Button", () => {
 		expect(refHolder.current).toBeInstanceOf(HTMLButtonElement);
 	});
 
-	it("uses serif font", () => {
+	it("uses a pill (rounded-full) shape", () => {
 		render(<Button>Hi</Button>);
 		const btn = screen.getByRole("button", { name: "Hi" });
-		expect(btn.className).toMatch(/font-serif/);
+		expect(btn.className).toMatch(/rounded-full/);
 	});
 });

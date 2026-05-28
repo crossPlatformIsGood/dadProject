@@ -62,7 +62,7 @@ type RangeState = { first: string; last: string; value: string };
 const emptyRange: RangeState = { first: "", last: "", value: "" };
 
 const inputClass =
-	"bg-surface border border-rule rounded-sm px-3 py-2 w-[120px] font-serif tabular-nums text-center text-base focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
+	"bg-surface border border-rule rounded-xl h-11 px-3 w-[110px] tabular-nums text-center focus:outline-none focus:ring-2 focus:ring-seal focus:border-seal transition-colors";
 
 const CopyPage = () => {
 	const navigate = useNavigate();
@@ -162,95 +162,85 @@ const CopyPage = () => {
 		<div className="max-w-2xl mx-auto px-4 py-6">
 			<PageTitle summary={false} />
 
-			<div className="border-2 border-double border-seal rounded-sm bg-surface shadow-md">
-				<div className="border-b border-rule-soft px-6 py-3 text-center font-serif text-sm tracking-[0.3em] text-seal uppercase">
-					【 复制数据 / Copy Range 】
-				</div>
+			<div className="bg-surface border border-rule rounded-2xl shadow-sm overflow-hidden">
+				{RANGES.map((cfg, index) => {
+					const isDecimal = cfg.key === "pen";
+					const state = ranges[cfg.key];
+					const error = errors[cfg.key];
+					const errorId = `error-${cfg.key}`;
+					const onValue = (v: string) =>
+						isDecimal
+							? handleDecimalChange(v, cfg.key, "value")
+							: handleIntegerChange(v, cfg.key, "value");
 
-				<div className="divide-y divide-rule-soft">
-					{RANGES.map((cfg) => {
-						const isDecimal = cfg.key === "pen";
-						const state = ranges[cfg.key];
-						const error = errors[cfg.key];
-						const errorId = `error-${cfg.key}`;
-						const onValue = (v: string) =>
-							isDecimal
-								? handleDecimalChange(v, cfg.key, "value")
-								: handleIntegerChange(v, cfg.key, "value");
+					return (
+						<section
+							key={cfg.key}
+							className={`px-6 py-5 ${index > 0 ? "border-t border-rule-soft" : ""}`}
+						>
+							<h3 className="text-sm font-semibold text-ink-soft tracking-wide mb-3">
+								{cfg.label}
+							</h3>
 
-						return (
-							<section key={cfg.key} className="px-6 py-5">
-								<div className="flex items-baseline justify-between mb-3">
-									<h3 className="font-serif text-base font-semibold tracking-[0.2em] text-seal uppercase">
-										{cfg.label}
-									</h3>
-									<span className="font-serif text-xs tracking-widest text-ink/60 uppercase">
-										Range
-									</span>
+							<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+								<div className="flex items-center gap-2">
+									<input
+										type="number"
+										aria-label={`${cfg.label} first pile`}
+										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
+										className={inputClass}
+										value={state.first}
+										onChange={(e) =>
+											handleIntegerChange(e.target.value, cfg.key, "first")
+										}
+									/>
+									<span className="text-ink-soft">—</span>
+									<input
+										type="number"
+										aria-label={`${cfg.label} last pile`}
+										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
+										className={inputClass}
+										value={state.last}
+										onChange={(e) =>
+											handleIntegerChange(e.target.value, cfg.key, "last")
+										}
+									/>
 								</div>
 
-								<div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-									<div className="flex items-center gap-2">
-										<input
-											type="number"
-											aria-label={`${cfg.label} first pile`}
-											aria-invalid={!!error}
-											aria-describedby={error ? errorId : undefined}
-											className={inputClass}
-											value={state.first}
-											onChange={(e) =>
-												handleIntegerChange(e.target.value, cfg.key, "first")
-											}
-										/>
-										<span className="text-rule font-serif text-xl">—</span>
-										<input
-											type="number"
-											aria-label={`${cfg.label} last pile`}
-											aria-invalid={!!error}
-											aria-describedby={error ? errorId : undefined}
-											className={inputClass}
-											value={state.last}
-											onChange={(e) =>
-												handleIntegerChange(e.target.value, cfg.key, "last")
-											}
-										/>
-									</div>
-
-									<div className="flex items-center gap-3 ml-auto">
-										<span className="font-serif text-sm tracking-wider text-ink/80">
-											支数
-										</span>
-										<input
-											type="number"
-											aria-label={`${cfg.label} value`}
-											aria-invalid={!!error}
-											aria-describedby={error ? errorId : undefined}
-											className={inputClass}
-											value={state.value}
-											onChange={(e) => onValue(e.target.value)}
-										/>
-									</div>
+								<div className="flex items-center gap-3 ml-auto">
+									<span className="text-sm text-ink-soft">支数</span>
+									<input
+										type="number"
+										aria-label={`${cfg.label} value`}
+										aria-invalid={!!error}
+										aria-describedby={error ? errorId : undefined}
+										className={inputClass}
+										value={state.value}
+										onChange={(e) => onValue(e.target.value)}
+									/>
 								</div>
+							</div>
 
-								{error && (
-									<p
-										id={errorId}
-										role="alert"
-										data-testid={errorId}
-										className="mt-3 font-serif text-sm font-medium text-seal"
-									>
-										⚠ {error}
-									</p>
-								)}
-							</section>
-						);
-					})}
-				</div>
+							{error && (
+								<p
+									id={errorId}
+									role="alert"
+									data-testid={errorId}
+									className="mt-3 text-sm text-red-500"
+								>
+									{error}
+								</p>
+							)}
+						</section>
+					);
+				})}
 			</div>
 
-			<div className="flex justify-center gap-4 pt-8">
+			<div className="flex justify-center gap-3 pt-8">
 				<Button size="xl" type="button" onClick={handleSubmit}>
-					【 OK 确认 】
+					确认
 				</Button>
 				<Button
 					size="xl"
@@ -266,7 +256,7 @@ const CopyPage = () => {
 };
 
 const FallbackMessage = () => (
-	<div className="min-h-[60vh] flex items-center justify-center font-serif text-ink/70 text-lg">
+	<div className="min-h-[60vh] flex items-center justify-center text-ink-soft text-base">
 		没有该数据
 	</div>
 );
