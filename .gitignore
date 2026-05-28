@@ -44,3 +44,6 @@ AGENTS.md
 CLAUDE.md
 GEMINI.md
 QODER.md
+
+# Internal docs (specs, design notes — not for repo)
+docs/
