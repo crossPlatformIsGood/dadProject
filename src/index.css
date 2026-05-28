@@ -25,15 +25,17 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 
-	/* Classic letterhead palette */
-	--color-paper: #faf6ef;
-	--color-paper-strong: #f4ecdb;
-	--color-ink: #1a1a1a;
-	--color-seal: #8b1a1a;
-	--color-seal-hover: #6b1313;
-	--color-seal-soft: #b94747;
-	--color-rule: #c8b89a;
-	--color-rule-soft: #e6ddc7;
+	/* Classic tea-brown (茶色) vintage palette */
+	--color-paper: #f5ecd9;
+	--color-paper-strong: #ede0c4;
+	--color-ink: #3a2a1c;
+	--color-seal: #6b4226;
+	--color-seal-hover: #4a2d18;
+	--color-seal-soft: #8a5a38;
+	--color-rule: #c4a878;
+	--color-rule-soft: #ddc8a0;
+	--color-gold: #b8862a;
+	--color-gold-soft: #d4a44a;
 
 	/* Serif stacks */
 	--font-serif-cn:
