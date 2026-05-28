@@ -22,3 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Added by code-review-graph
+.code-review-graph/
+
+# AI assistant configs
+.claude/
+.codegraph/
+.cursorrules
+.gemini/
+.kiro/
+.mcp.json
+.opencode.json
+.qoder/
+.windsurfrules
+.github/code-review-graph.instruction.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+QODER.md
